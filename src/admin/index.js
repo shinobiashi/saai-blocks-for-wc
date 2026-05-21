@@ -20,7 +20,7 @@ const MyExamplePage = () => (
 				type="products"
 				placeholder="Search for something"
 				selected={[]}
-				onChange={(items) => setInlineSelect(items)}
+				onChange={() => {}}
 				inlineTags
 			/>
 		</Woo.Section>
@@ -50,7 +50,6 @@ const MyExamplePage = () => (
 
 		<Woo.Section component="article">
 			<Woo.SectionHeader title={__('Spinner', 'saai-blocks-for-wc')} />
-			<Woo.H>I am a spinner!</Woo.H>
 			<Woo.Spinner />
 		</Woo.Section>
 
@@ -68,7 +67,7 @@ addFilter('woocommerce_admin_pages_list', 'saai-blocks-for-wc', (pages) => {
 	pages.push({
 		container: MyExamplePage,
 		path: '/saai-blocks-for-wc',
-		breadcrumbs: [__('Saai Blocks For Wc', 'saai-blocks-for-wc')],
+		breadcrumbs: [__('Saai Blocks for WooCommerce', 'saai-blocks-for-wc')],
 		navArgs: {
 			id: 'saai_blocks_for_wc',
 		},

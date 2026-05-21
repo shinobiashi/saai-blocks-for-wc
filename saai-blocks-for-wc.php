@@ -1,63 +1,64 @@
 <?php
 /**
- * Plugin Name: Saai Blocks For Wc
+ * Plugin Name: Saai Blocks for WooCommerce
+ * Plugin URI: https://wordpress.org/plugins/saai-blocks-for-wc/
+ * Description: WooCommerce-focused Gutenberg blocks for the frontend and admin.
  * Version: 0.1.0
- * Author: The WordPress Contributors
- * Author URI: https://woocommerce.com
+ * Author: Shohei Tanaka
+ * Author URI: https://artws.info/
  * Text Domain: saai-blocks-for-wc
  * Domain Path: /languages
+ * Requires at least: 6.6
+ * Requires PHP: 7.4
+ * Requires Plugins: woocommerce
+ * WC requires at least: 9.0
+ * WC tested up to: 9.8
  *
  * License: GNU General Public License v3.0
  * License URI: http://www.gnu.org/licenses/gpl-3.0.html
  *
- * @package extension
+ * @package SaaiBlocksForWc
  */
 
 defined( 'ABSPATH' ) || exit;
 
-if ( ! defined( 'SAAI_BLOCKS_FOR_WC_MAIN_PLUGIN_FILE' ) ) {
-	define( 'SAAI_BLOCKS_FOR_WC_MAIN_PLUGIN_FILE', __FILE__ );
-}
+define( 'SAAI_BLOCKS_FOR_WC_VERSION', '0.1.0' );
+define( 'SAAI_BLOCKS_FOR_WC_MAIN_PLUGIN_FILE', __FILE__ );
+define( 'SAAI_BLOCKS_FOR_WC_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'SAAI_BLOCKS_FOR_WC_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
-require_once plugin_dir_path( __FILE__ ) . '/vendor/autoload_packages.php';
+require_once SAAI_BLOCKS_FOR_WC_PLUGIN_DIR . 'vendor/autoload_packages.php';
 
 use SaaiBlocksForWc\Admin\Setup;
+use SaaiBlocksForWc\Blocks\Register;
 
 // phpcs:disable WordPress.Files.FileName
 
 /**
- * WooCommerce fallback notice.
+ * WooCommerce missing notice.
  *
  * @since 0.1.0
  */
 function saai_blocks_for_wc_missing_wc_notice() {
-	/* translators: %s WC download URL link. */
-	echo '<div class="error"><p><strong>' . sprintf( esc_html__( 'Saai Blocks For Wc requires WooCommerce to be installed and active. You can download %s here.', 'saai_blocks_for_wc' ), '<a href="https://woocommerce.com/" target="_blank">WooCommerce</a>' ) . '</strong></p></div>';
-}
-
-register_activation_hook( __FILE__, 'saai_blocks_for_wc_activate' );
-
-/**
- * Activation hook.
- *
- * @since 0.1.0
- */
-function saai_blocks_for_wc_activate() {
-	if ( ! class_exists( 'WooCommerce' ) ) {
-		add_action( 'admin_notices', 'saai_blocks_for_wc_missing_wc_notice' );
-		return;
-	}
+	echo '<div class="error"><p><strong>' .
+		sprintf(
+			/* translators: %s: WooCommerce download URL. */
+			esc_html__( 'Saai Blocks for WooCommerce requires WooCommerce to be installed and active. You can download %s here.', 'saai-blocks-for-wc' ),
+			'<a href="https://woocommerce.com/" target="_blank">WooCommerce</a>'
+		) .
+		'</strong></p></div>';
 }
 
 if ( ! class_exists( 'SaaiBlocksForWc' ) ) :
 	/**
-	 * The SaaiBlocksForWc class.
+	 * Main plugin class.
 	 */
 	class SaaiBlocksForWc {
+
 		/**
-		 * This class instance.
+		 * Single instance.
 		 *
-		 * @var \SaaiBlocksForWc single instance of this class.
+		 * @var \SaaiBlocksForWc
 		 */
 		private static $instance;
 
@@ -65,6 +66,8 @@ if ( ! class_exists( 'SaaiBlocksForWc' ) ) :
 		 * Constructor.
 		 */
 		public function __construct() {
+			new Register();
+
 			if ( is_admin() ) {
 				new Setup();
 			}
@@ -74,25 +77,22 @@ if ( ! class_exists( 'SaaiBlocksForWc' ) ) :
 		 * Cloning is forbidden.
 		 */
 		public function __clone() {
-			wc_doing_it_wrong( __FUNCTION__, __( 'Cloning is forbidden.', 'saai_blocks_for_wc' ), $this->version );
+			wc_doing_it_wrong( __FUNCTION__, __( 'Cloning is forbidden.', 'saai-blocks-for-wc' ), SAAI_BLOCKS_FOR_WC_VERSION );
 		}
 
 		/**
-		 * Unserializing instances of this class is forbidden.
+		 * Unserializing is forbidden.
 		 */
 		public function __wakeup() {
-			wc_doing_it_wrong( __FUNCTION__, __( 'Unserializing instances of this class is forbidden.', 'saai_blocks_for_wc' ), $this->version );
+			wc_doing_it_wrong( __FUNCTION__, __( 'Unserializing instances of this class is forbidden.', 'saai-blocks-for-wc' ), SAAI_BLOCKS_FOR_WC_VERSION );
 		}
 
 		/**
 		 * Gets the main instance.
 		 *
-		 * Ensures only one instance can be loaded.
-		 *
-		 * @return \saai_blocks_for_wc
+		 * @return \SaaiBlocksForWc
 		 */
 		public static function instance() {
-
 			if ( null === self::$instance ) {
 				self::$instance = new self();
 			}
@@ -110,7 +110,7 @@ add_action( 'plugins_loaded', 'saai_blocks_for_wc_init', 10 );
  * @since 0.1.0
  */
 function saai_blocks_for_wc_init() {
-	load_plugin_textdomain( 'saai_blocks_for_wc', false, plugin_basename( dirname( __FILE__ ) ) . '/languages' );
+	load_plugin_textdomain( 'saai-blocks-for-wc', false, plugin_basename( dirname( __FILE__ ) ) . '/languages' );
 
 	if ( ! class_exists( 'WooCommerce' ) ) {
 		add_action( 'admin_notices', 'saai_blocks_for_wc_missing_wc_notice' );

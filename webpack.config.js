@@ -3,6 +3,10 @@ const WooCommerceDependencyExtractionWebpackPlugin = require('@woocommerce/depen
 
 module.exports = {
 	...defaultConfig,
+	entry: {
+		...defaultConfig.entry,
+		admin: './src/admin/index.js',
+	},
 	plugins: [
 		...defaultConfig.plugins.filter(
 			(plugin) =>

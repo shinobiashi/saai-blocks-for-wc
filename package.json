@@ -1,9 +1,8 @@
 {
 	"name": "saai-blocks-for-wc",
 	"version": "0.1.0",
-	"author": "The WordPress Contributors",
+	"author": "Shohei Tanaka",
 	"license": "GPL-3.0+",
-	"main": "build/index.js",
 	"scripts": {
 		"build": "wp-scripts build --blocks-manifest",
 		"format": "wp-scripts format",
@@ -12,12 +11,16 @@
 		"packages-update": "wp-scripts packages-update",
 		"plugin-zip": "wp-scripts plugin-zip",
 		"start": "wp-scripts start --blocks-manifest",
-		"postinstall": "rm -f src/block.json && composer install"
+		"postinstall": "composer install"
 	},
 	"dependencies": {
-		"@woocommerce/components": "latest",
-		"@wordpress/hooks": "latest",
-		"@wordpress/i18n": "latest"
+		"@woocommerce/components": "*",
+		"@wordpress/block-editor": "*",
+		"@wordpress/blocks": "*",
+		"@wordpress/components": "*",
+		"@wordpress/element": "*",
+		"@wordpress/hooks": "*",
+		"@wordpress/i18n": "*"
 	},
 	"devDependencies": {
 		"@woocommerce/dependency-extraction-webpack-plugin": "latest",

@@ -51,6 +51,9 @@ package-lock.json
 # wp-env config
 .wp-env.override.json
 
+# Claude Code — ignore local settings but track skills
+.claude/settings.local.json
+
 # Unit tests
 tmp/
 
