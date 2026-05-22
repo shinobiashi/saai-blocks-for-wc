@@ -15,6 +15,20 @@ Skills use [Semantic Versioning](https://semver.org/): `MAJOR.MINOR.PATCH`.
 
 ---
 
+## wc-block-development — 1.0.0 — 2026-05-22
+
+### Added
+- Initial release
+- `SKILL.md`: 3-path decision procedure (frontend block / checkout extension / product editor block) with webpack setup, PHP registration, and testing steps
+- `references/block-types-and-decisions.md`: decision tree, comparison table, IntegrationInterface + ExtendSchema PHP examples
+- `references/webpack-setup.md`: `@woocommerce/dependency-extraction-webpack-plugin` config, multiple entries, asset.php verification, package-to-handle map
+- `references/checkout-extensions.md`: IntegrationInterface PHP + `registerCheckoutFilters` + Slot/Fill JS patterns
+- `references/store-api-php.md`: `ExtendSchema::register_endpoint_data()` for cart/checkout/cart-items, JS-side access, validation callbacks
+- `references/wc-data-stores.md`: editor/frontend/SSR data access patterns, `useSelect` with `@woocommerce/data`, Store API REST fetch, PHP→JS data via `wp_add_inline_script`
+- `references/product-editor-blocks.md`: Area/Section/Block hierarchy, `useWooBlockProps` + `useEntityProp`, PHP template registration, product type gating, `hideConditions`
+
+---
+
 ## wp-i18n — 1.0.0 — 2026-05-22
 
 ### Added
