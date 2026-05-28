@@ -9,6 +9,7 @@
 		"lint:css": "wp-scripts lint-style",
 		"lint:js": "wp-scripts lint-js",
 		"packages-update": "wp-scripts packages-update",
+		"makepot": "npx wp-env run cli wp i18n make-pot /var/www/html/wp-content/plugins/saai-blocks-for-wc /var/www/html/wp-content/plugins/saai-blocks-for-wc/languages/saai-blocks-for-wc.pot --domain=saai-blocks-for-wc --exclude=vendor,node_modules,build,tests",
 		"plugin-zip": "wp-scripts plugin-zip",
 		"start": "wp-scripts start --blocks-manifest",
 		"postinstall": "composer install"

@@ -56,6 +56,12 @@ class ClassicTheme {
 			true
 		);
 
+		wp_set_script_translations(
+			'saai-product-video',
+			'saai-blocks-for-wc',
+			SAAI_BLOCKS_FOR_WC_PLUGIN_DIR . 'languages'
+		);
+
 		wp_enqueue_style(
 			'saai-product-video',
 			SAAI_BLOCKS_FOR_WC_PLUGIN_URL . 'build/frontend/product-video.css',

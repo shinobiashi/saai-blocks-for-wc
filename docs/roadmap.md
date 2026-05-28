@@ -20,7 +20,7 @@
 | 1.4 クラシックテーマ フロント統合 | ✅ 完了 | |
 | 1.5 ブロックテーマ（FSE）統合 | 🔶 一部完了 | WC block product editor は未対応 |
 | 1.6 テスト・品質保証 | 🔶 一部完了 | E2E は未実装 |
-| 1.7 i18n | 🔲 未着手 | |
+| 1.7 i18n | ✅ 完了 | |
 
 ### 仕様サマリー
 
@@ -189,10 +189,22 @@ npx wp-env run tests-cli "cd /var/www/html/wp-content/plugins/saai-blocks-for-wc
 
 **内容**:
 
-- [ ] すべての文字列を `__()` / `_e()` でラップ
-- [ ] JS 文字列を `@wordpress/i18n` でラップ（Phase 1.1〜1.2 は実装済み）
-- [ ] POT ファイル生成 (`npm run makepot`)
-- [ ] `wp_set_script_translations` の設定
+- [x] すべての PHP 文字列を `__()` / `esc_html__()` でラップ済み
+- [x] JS 文字列を `@wordpress/i18n` でラップ（lightbox の `Close` aria-label を追加）
+- [x] `wp_set_script_translations` の設定（全スクリプト対応済み）
+  - `saai-blocks-for-wc-overview` — `Setup.php`
+  - `saai-blocks-for-wc-settings` — `Setup.php`
+  - `saai-product-video-panel` — `AdminPanel.php`
+  - `saai-product-video` (frontend) — `ClassicTheme.php`
+  - blocks: `block.json` の `textdomain` により WordPress が自動ロード
+- [x] POT ファイル生成スクリプト追加 (`npm run makepot` — wp-env 経由で `wp i18n make-pot` を実行)
+- [x] `languages/` ディレクトリ作成
+
+**POT 生成コマンド**:
+
+```bash
+npm run makepot
+```
 
 ---
 

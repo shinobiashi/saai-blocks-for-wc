@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 import './index.scss';
 
 /* global jQuery */
@@ -106,7 +107,7 @@ import './index.scss';
 			'<div class="saai-lightbox" aria-hidden="true" role="dialog">' +
 				'<div class="saai-lightbox__overlay"></div>' +
 				'<div class="saai-lightbox__dialog">' +
-					'<button class="saai-lightbox__close" aria-label="Close">&#x2715;</button>' +
+					'<button class="saai-lightbox__close" aria-label="' + __( 'Close', 'saai-blocks-for-wc' ) + '">&#x2715;</button>' +
 					'<div class="saai-lightbox__player"></div>' +
 				'</div>' +
 			'</div>'
