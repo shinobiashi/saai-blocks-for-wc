@@ -1,7 +1,14 @@
 {
 	"phpVersion": "8.2",
 	"core": "WordPress/WordPress#6.8",
-	"plugins": ["https://downloads.wordpress.org/plugin/woocommerce.zip", "."],
+	"plugins": [
+		"https://downloads.wordpress.org/plugin/woocommerce.zip",
+		"https://downloads.wordpress.org/plugin/plugin-check.zip",
+		"https://downloads.wordpress.org/plugin/query-monitor.zip",
+		"https://downloads.wordpress.org/plugin/user-switching.zip",
+		"https://downloads.wordpress.org/plugin/wp-crontrol.zip",
+		"."
+	],
 	"config": {
 		"JETPACK_AUTOLOAD_DEV": true,
 		"WP_DEBUG": true,
