@@ -14,5 +14,10 @@
 		"WP_DEBUG": true,
 		"SCRIPT_DEBUG": true,
 		"WP_DEBUG_LOG": true
+	},
+	"env": {
+		"development": {
+			"phpmyadminPort": 9001
+		}
 	}
 }

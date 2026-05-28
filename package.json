@@ -12,9 +12,7 @@
 		"makepot": "npx wp-env run cli wp i18n make-pot /var/www/html/wp-content/plugins/saai-blocks-for-wc /var/www/html/wp-content/plugins/saai-blocks-for-wc/languages/saai-blocks-for-wc.pot --domain=saai-blocks-for-wc --exclude=vendor,node_modules,build,tests",
 		"plugin-zip": "wp-scripts plugin-zip",
 		"start": "wp-scripts start --blocks-manifest",
-		"postinstall": "composer install",
-		"phpmyadmin:start": "docker compose -f docker-compose.phpmyadmin.yml up -d && echo 'phpMyAdmin: http://localhost:8181'",
-		"phpmyadmin:stop": "docker compose -f docker-compose.phpmyadmin.yml down"
+		"postinstall": "composer install"
 	},
 	"dependencies": {
 		"@woocommerce/components": "*",
