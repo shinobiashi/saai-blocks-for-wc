@@ -37,21 +37,6 @@ use SaaiBlocksForWc\ProductVideo\Meta;
 
 // phpcs:disable WordPress.Files.FileName
 
-/**
- * WooCommerce missing notice.
- *
- * @since 0.1.0
- */
-function saai_blocks_for_wc_missing_wc_notice() {
-	echo '<div class="error"><p><strong>' .
-		sprintf(
-			/* translators: %s: WooCommerce download URL. */
-			esc_html__( 'Saai Blocks for WooCommerce requires WooCommerce to be installed and active. You can download %s here.', 'saai-blocks-for-wc' ),
-			'<a href="https://woocommerce.com/" target="_blank">WooCommerce</a>'
-		) .
-		'</strong></p></div>';
-}
-
 if ( ! class_exists( 'SaaiBlocksForWc' ) ) :
 	/**
 	 * Main plugin class.
@@ -120,7 +105,18 @@ function saai_blocks_for_wc_init() {
 	load_plugin_textdomain( 'saai-blocks-for-wc', false, plugin_basename( __DIR__ ) . '/languages' );
 
 	if ( ! class_exists( 'WooCommerce' ) ) {
-		add_action( 'admin_notices', 'saai_blocks_for_wc_missing_wc_notice' );
+		add_action(
+			'admin_notices',
+			static function () {
+				echo '<div class="error"><p><strong>' .
+					sprintf(
+						/* translators: %s: WooCommerce download URL. */
+						esc_html__( 'Saai Blocks for WooCommerce requires WooCommerce to be installed and active. You can download %s here.', 'saai-blocks-for-wc' ),
+						'<a href="https://woocommerce.com/" target="_blank">WooCommerce</a>'
+					) .
+					'</strong></p></div>';
+			}
+		);
 		return;
 	}
 

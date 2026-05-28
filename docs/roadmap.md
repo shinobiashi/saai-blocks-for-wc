@@ -19,7 +19,7 @@
 | 1.3 グローバル設定ページ | ✅ 完了 | |
 | 1.4 クラシックテーマ フロント統合 | ✅ 完了 | |
 | 1.5 ブロックテーマ（FSE）統合 | 🔶 一部完了 | WC block product editor は未対応 |
-| 1.6 テスト・品質保証 | 🔲 未着手 | |
+| 1.6 テスト・品質保証 | 🔶 一部完了 | E2E は未実装 |
 | 1.7 i18n | 🔲 未着手 | |
 
 ### 仕様サマリー
@@ -168,11 +168,20 @@
 
 **内容**:
 
-- [ ] PHPUnit: メタ登録・サニタイズ・取得のユニットテスト
-- [ ] PHPUnit: REST API エンドポイントのテスト
-- [ ] E2E (Playwright): 商品編集画面で動画を追加して保存するフロー
-- [ ] E2E: フロントエンドで動画が正しく表示されるフロー（3スタイル）
-- [ ] PHPCS / PHPStan パス確認
+- [x] PHPUnit: メタ登録・サニタイズ・取得のユニットテスト (`tests/Unit/MetaTest.php`)
+- [x] PHPUnit: REST API エンドポイントのテスト (`tests/Integration/MetaRestApiTest.php`)
+- [x] PHPStan lv5 パス確認
+- [ ] E2E (Playwright): 商品編集画面で動画を追加して保存するフロー — 別タスク
+- [ ] E2E: フロントエンドで動画が正しく表示されるフロー（3スタイル）— 別タスク
+- [ ] PHPCS: `phpcs` インストール後に確認（現在 `vendor/bin/phpcs` 未インストール）
+
+**テスト実行コマンド** (wp-env):
+
+```bash
+npx wp-env run tests-cli "cd /var/www/html/wp-content/plugins/saai-blocks-for-wc && vendor/bin/phpunit"
+# Unit のみ
+npx wp-env run tests-cli "cd /var/www/html/wp-content/plugins/saai-blocks-for-wc && vendor/bin/phpunit --testsuite Unit"
+```
 
 ---
 

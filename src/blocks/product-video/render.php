@@ -20,7 +20,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 $product_id = (int) ( $block->context['postId'] ?? 0 );
 
 if ( ! $product_id ) {
-	/* @var WC_Product|null $product */
 	global $product;
 	if ( $product instanceof WC_Product ) {
 		$product_id = $product->get_id();

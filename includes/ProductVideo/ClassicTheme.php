@@ -70,7 +70,6 @@ class ClassicTheme {
 	 * Standalone display style is handled separately via render_standalone_section().
 	 */
 	public function render_video_thumbnails() {
-		/* @var \WC_Product|null $product */
 		global $product;
 
 		if ( ! $product instanceof \WC_Product ) {
@@ -147,7 +146,6 @@ class ClassicTheme {
 	 * Only outputs when the effective display style is 'standalone'.
 	 */
 	public function render_standalone_section() {
-		/* @var \WC_Product|null $product */
 		global $product;
 
 		if ( ! $product instanceof \WC_Product ) {
@@ -180,7 +178,6 @@ class ClassicTheme {
 		$product_id = absint( $atts['id'] );
 
 		if ( ! $product_id ) {
-			/* @var \WC_Product|null $product */
 			global $product;
 			if ( $product instanceof \WC_Product ) {
 				$product_id = $product->get_id();
