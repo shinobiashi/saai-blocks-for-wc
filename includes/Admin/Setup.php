@@ -7,8 +7,6 @@
 
 namespace SaaiBlocksForWc\Admin;
 
-use Automattic\WooCommerce\Internal\Admin\Loader;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -85,7 +83,7 @@ class Setup {
 	 * the callback for this menu entry).
 	 */
 	public function overview_page_callback() {
-		Loader::page_wrapper();
+		echo '<div class="wrap"><div id="root"></div></div>';
 	}
 
 	/**
