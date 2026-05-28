@@ -16,7 +16,7 @@
 | --- | --- | --- |
 | 1.1 メタデータ基盤 | ✅ 完了 | |
 | 1.2 商品編集画面パネル | 🔶 一部完了 | クラシックエディタのみ。ブロックエディタは未対応 |
-| 1.3 グローバル設定ページ | 🔲 未着手 | プレースホルダーのみ実装済み |
+| 1.3 グローバル設定ページ | ✅ 完了 | |
 | 1.4 クラシックテーマ フロント統合 | 🔲 未着手 | |
 | 1.5 ブロックテーマ（FSE）統合 | 🔲 未着手 | |
 | 1.6 テスト・品質保証 | 🔲 未着手 | |
@@ -119,10 +119,10 @@
 
 **内容**:
 
-- [ ] `src/saai/admin/video-settings/index.js` に動画デフォルト表示スタイルのセレクターを実装
-- [ ] `saai_blocks_for_wc_video_display_style` オプションの REST API 登録 (`register_setting`)
-- [ ] `@wordpress/api-fetch` で設定値の保存・取得
-- [ ] 保存成功/失敗の Notice 表示
+- [x] `src/saai/admin/video-settings/index.js` に動画デフォルト表示スタイルのセレクターを実装
+- [x] `saai_blocks_for_wc_video_display_style` オプションの REST API 登録 (`register_setting`)
+- [x] `@wordpress/api-fetch` で設定値の保存・取得
+- [x] 保存成功/失敗の Notice 表示
 
 ---
 

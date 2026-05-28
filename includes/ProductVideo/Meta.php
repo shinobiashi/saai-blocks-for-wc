@@ -46,6 +46,13 @@ class Meta {
 	private static $allowed_styles = array( '', 'inline', 'lightbox', 'standalone' );
 
 	/**
+	 * Allowed global display style values (never empty).
+	 *
+	 * @var string[]
+	 */
+	private static $allowed_global_styles = array( 'inline', 'lightbox', 'standalone' );
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {
@@ -112,6 +119,17 @@ class Meta {
 				'auth_callback'     => array( $this, 'auth_callback' ),
 			)
 		);
+
+		register_setting(
+			'saai-blocks-for-wc',
+			'saai_blocks_for_wc_video_display_style',
+			array(
+				'type'              => 'string',
+				'default'           => 'inline',
+				'show_in_rest'      => true,
+				'sanitize_callback' => array( __CLASS__, 'sanitize_global_display_style' ),
+			)
+		);
 	}
 
 	/**
@@ -169,6 +187,19 @@ class Meta {
 	public static function sanitize_display_style( $value ) {
 		$value = sanitize_key( (string) $value );
 		return in_array( $value, self::$allowed_styles, true ) ? $value : '';
+	}
+
+	/**
+	 * Sanitize the global display style option value.
+	 *
+	 * Unlike per-product style, empty string is not permitted; falls back to 'inline'.
+	 *
+	 * @param mixed $value Raw input value.
+	 * @return string One of 'inline', 'lightbox', 'standalone'.
+	 */
+	public static function sanitize_global_display_style( $value ) {
+		$value = sanitize_key( (string) $value );
+		return in_array( $value, self::$allowed_global_styles, true ) ? $value : 'inline';
 	}
 
 	/**

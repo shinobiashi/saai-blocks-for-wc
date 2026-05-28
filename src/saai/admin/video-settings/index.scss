@@ -1,0 +1,46 @@
+.saai-admin-layout {
+	max-width: 960px;
+
+	.saai-admin__header {
+		border-bottom: 1px solid #e0e0e0;
+		margin-bottom: 24px;
+		padding-bottom: 12px;
+
+		.saai-admin__header-wrapper {
+			h1 {
+				font-size: 1.5rem;
+				font-weight: 600;
+				margin: 0;
+			}
+		}
+	}
+
+	.saai-admin__content {
+		padding: 0 4px;
+	}
+}
+
+.saai-settings-form {
+	background: #fff;
+	border: 1px solid #e0e0e0;
+	border-radius: 4px;
+	padding: 24px;
+	max-width: 520px;
+
+	.saai-settings-form__field {
+		margin-bottom: 24px;
+
+		.components-base-control__label {
+			font-weight: 600;
+		}
+	}
+
+	.saai-settings-form__actions {
+		border-top: 1px solid #f0f0f0;
+		padding-top: 16px;
+	}
+
+	.components-notice {
+		margin: 0 0 20px;
+	}
+}
