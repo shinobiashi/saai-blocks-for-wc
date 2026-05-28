@@ -1,15 +1,19 @@
-const defaultConfig = require('@wordpress/scripts/config/webpack.config');
-const WooCommerceDependencyExtractionWebpackPlugin = require('@woocommerce/dependency-extraction-webpack-plugin');
+const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
+const WooCommerceDependencyExtractionWebpackPlugin = require( '@woocommerce/dependency-extraction-webpack-plugin' );
 
 module.exports = {
 	...defaultConfig,
 	entry: {
-		...defaultConfig.entry,
-		admin: './src/admin/index.js',
+		...( typeof defaultConfig.entry === 'function'
+			? defaultConfig.entry()
+			: defaultConfig.entry ),
+		'saai/admin/overview': './src/saai/admin/overview/index.js',
+		'saai/admin/video-settings':
+			'./src/saai/admin/video-settings/index.js',
 	},
 	plugins: [
 		...defaultConfig.plugins.filter(
-			(plugin) =>
+			( plugin ) =>
 				plugin.constructor.name !== 'DependencyExtractionWebpackPlugin'
 		),
 		new WooCommerceDependencyExtractionWebpackPlugin(),
