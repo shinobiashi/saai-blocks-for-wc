@@ -107,6 +107,10 @@ class AdminPanel {
 			return;
 		}
 
+		if ( ! current_user_can( 'edit_posts' ) ) {
+			return;
+		}
+
 		$post = get_post();
 		if ( ! $post || 'product' !== $post->post_type ) {
 			return;

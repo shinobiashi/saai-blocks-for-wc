@@ -1,11 +1,19 @@
 <?php
+// phpcs:disable WordPress.Files.FileName
+/**
+ * Block registration handler.
+ *
+ * @package SaaiBlocksForWc
+ */
 
 namespace SaaiBlocksForWc\Blocks;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Handles block registration for all blocks in this plugin.
- *
- * @package SaaiBlocksForWc
  */
 class Register {
 

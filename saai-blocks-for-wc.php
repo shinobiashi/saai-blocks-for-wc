@@ -109,10 +109,13 @@ function saai_blocks_for_wc_init() {
 			'admin_notices',
 			static function () {
 				echo '<div class="error"><p><strong>' .
-					sprintf(
-						/* translators: %s: WooCommerce download URL. */
-						esc_html__( 'Saai Blocks for WooCommerce requires WooCommerce to be installed and active. You can download %s here.', 'saai-blocks-for-wc' ),
-						'<a href="https://woocommerce.com/" target="_blank">WooCommerce</a>'
+					wp_kses(
+						sprintf(
+							/* translators: %s: WooCommerce download URL. */
+							__( 'Saai Blocks for WooCommerce requires WooCommerce to be installed and active. You can download %s here.', 'saai-blocks-for-wc' ),
+							'<a href="https://woocommerce.com/" target="_blank">WooCommerce</a>'
+						),
+						array( 'a' => array( 'href' => array(), 'target' => array() ) )
 					) .
 					'</strong></p></div>';
 			}
