@@ -1,0 +1,25 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "saai-blocks-for-wc/product-video",
+	"version": "0.1.0",
+	"title": "Product Video",
+	"category": "woocommerce",
+	"description": "Display product videos in WooCommerce product templates.",
+	"textdomain": "saai-blocks-for-wc",
+	"attributes": {
+		"displayStyle": {
+			"type": "string",
+			"default": "global"
+		}
+	},
+	"usesContext": [ "postId", "postType" ],
+	"supports": {
+		"html": false,
+		"reusable": false,
+		"lock": false
+	},
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"render": "file:./render.php"
+}

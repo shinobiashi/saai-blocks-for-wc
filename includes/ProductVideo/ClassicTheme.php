@@ -70,7 +70,7 @@ class ClassicTheme {
 	 * Standalone display style is handled separately via render_standalone_section().
 	 */
 	public function render_video_thumbnails() {
-		/** @var \WC_Product|null $product */
+		/* @var \WC_Product|null $product */
 		global $product;
 
 		if ( ! $product instanceof \WC_Product ) {
@@ -115,18 +115,18 @@ class ClassicTheme {
 		}
 		?>
 		<div class="woocommerce-product-gallery__image saai-video-thumb"
-			 data-video-type="<?php echo esc_attr( $type ); ?>"
-			 data-video-id="<?php echo esc_attr( $video_id ); ?>"
-			 data-video-url="<?php echo esc_url( $url ); ?>"
-			 data-video-style="<?php echo esc_attr( $style ); ?>"
-			 data-attachment-id="<?php echo absint( $attach_id ); ?>">
+			data-video-type="<?php echo esc_attr( $type ); ?>"
+			data-video-id="<?php echo esc_attr( $video_id ); ?>"
+			data-video-url="<?php echo esc_url( $url ); ?>"
+			data-video-style="<?php echo esc_attr( $style ); ?>"
+			data-attachment-id="<?php echo absint( $attach_id ); ?>">
 			<a href="<?php echo $thumb_url ? esc_url( $thumb_url ) : '#'; ?>"
-			   class="saai-video-thumb__link"
-			   aria-label="<?php echo $title; ?>">
+				class="saai-video-thumb__link"
+				aria-label="<?php echo $title; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- already esc_attr() above ?>">
 				<?php if ( $thumb_url ) : ?>
 					<img src="<?php echo esc_url( $thumb_url ); ?>"
-						 alt="<?php echo $title; ?>"
-						 class="saai-video-thumb__img" />
+						alt="<?php echo $title; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- already esc_attr() above ?>"
+						class="saai-video-thumb__img" />
 				<?php else : ?>
 					<div class="saai-video-thumb__no-thumb"></div>
 				<?php endif; ?>
@@ -147,7 +147,7 @@ class ClassicTheme {
 	 * Only outputs when the effective display style is 'standalone'.
 	 */
 	public function render_standalone_section() {
-		/** @var \WC_Product|null $product */
+		/* @var \WC_Product|null $product */
 		global $product;
 
 		if ( ! $product instanceof \WC_Product ) {
@@ -180,7 +180,7 @@ class ClassicTheme {
 		$product_id = absint( $atts['id'] );
 
 		if ( ! $product_id ) {
-			/** @var \WC_Product|null $product */
+			/* @var \WC_Product|null $product */
 			global $product;
 			if ( $product instanceof \WC_Product ) {
 				$product_id = $product->get_id();
@@ -222,9 +222,9 @@ class ClassicTheme {
 				<div class="saai-product-videos__item">
 					<?php if ( 'wp_media' === ( $video['type'] ?? '' ) ) : ?>
 						<video class="saai-product-videos__player"
-							   src="<?php echo esc_url( $video['url'] ?? '' ); ?>"
-							   controls
-							   preload="metadata">
+							src="<?php echo esc_url( $video['url'] ?? '' ); ?>"
+							controls
+							preload="metadata">
 						</video>
 					<?php else : ?>
 						<?php $embed_url = $this->get_embed_url( $video ); ?>

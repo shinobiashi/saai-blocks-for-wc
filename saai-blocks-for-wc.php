@@ -117,7 +117,7 @@ add_action( 'plugins_loaded', 'saai_blocks_for_wc_init', 10 );
  * @since 0.1.0
  */
 function saai_blocks_for_wc_init() {
-	load_plugin_textdomain( 'saai-blocks-for-wc', false, plugin_basename( dirname( __FILE__ ) ) . '/languages' );
+	load_plugin_textdomain( 'saai-blocks-for-wc', false, plugin_basename( __DIR__ ) . '/languages' );
 
 	if ( ! class_exists( 'WooCommerce' ) ) {
 		add_action( 'admin_notices', 'saai_blocks_for_wc_missing_wc_notice' );

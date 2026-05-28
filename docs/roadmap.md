@@ -18,7 +18,7 @@
 | 1.2 商品編集画面パネル | 🔶 一部完了 | クラシックエディタのみ。ブロックエディタは未対応 |
 | 1.3 グローバル設定ページ | ✅ 完了 | |
 | 1.4 クラシックテーマ フロント統合 | ✅ 完了 | |
-| 1.5 ブロックテーマ（FSE）統合 | 🔲 未着手 | |
+| 1.5 ブロックテーマ（FSE）統合 | 🔶 一部完了 | WC block product editor は未対応 |
 | 1.6 テスト・品質保証 | 🔲 未着手 | |
 | 1.7 i18n | 🔲 未着手 | |
 
@@ -153,14 +153,14 @@
 
 **内容**:
 
-- [ ] `block.json` 定義（カテゴリ: `woocommerce`）
-- [ ] PHP render callback (`render.php`)
-- [ ] WooCommerce `woocommerce/product-image-gallery` ブロックとの統合
-  - Inner Block または Slot/Fill で動画をギャラリーに追加
-  - 表示スタイルに応じたレンダリング切り替え
-- [ ] エディタプレビュー（商品 ID から動画メタを取得して表示）
-- [ ] ブロック属性: `displayStyle` (`"inline"` | `"lightbox"` | `"standalone"` | `"global"`)
-- [ ] WC block product editor（新エディタ）対応 — Phase 1.2 未対応分の継続
+- [x] `block.json` 定義（カテゴリ: `woocommerce`）
+- [x] PHP render callback (`render.php`) — standalone スタイル時にブロック位置で動画を出力
+- [x] WooCommerce `woocommerce/product-image-gallery` ブロックとの統合
+  - `woocommerce_product_thumbnails` フックは FSE でも呼ばれるため ClassicTheme が両テーマ対応
+  - 表示スタイルに応じたレンダリング切り替え（standalone のみブロックで出力、inline/lightbox はギャラリーフックで処理）
+- [x] エディタプレビュー — Placeholder + InspectorControls で displayStyle を選択可能
+- [x] ブロック属性: `displayStyle` (`"global"` | `"inline"` | `"lightbox"` | `"standalone"`)
+- [ ] WC block product editor（新エディタ）対応 — `@woocommerce/product-editor` Slot/Fill が必要。別タスクに分離
 
 ---
 
