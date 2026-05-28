@@ -31,6 +31,7 @@ require_once SAAI_BLOCKS_FOR_WC_PLUGIN_DIR . 'vendor/autoload_packages.php';
 
 use SaaiBlocksForWc\Admin\Setup;
 use SaaiBlocksForWc\Blocks\Register;
+use SaaiBlocksForWc\ProductVideo\AdminPanel;
 use SaaiBlocksForWc\ProductVideo\Meta;
 
 // phpcs:disable WordPress.Files.FileName
@@ -72,6 +73,7 @@ if ( ! class_exists( 'SaaiBlocksForWc' ) ) :
 
 			if ( is_admin() ) {
 				new Setup();
+				new AdminPanel();
 			}
 		}
 

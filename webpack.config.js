@@ -10,6 +10,8 @@ module.exports = {
 		'saai/admin/overview': './src/saai/admin/overview/index.js',
 		'saai/admin/video-settings':
 			'./src/saai/admin/video-settings/index.js',
+		'saai/admin/product-video-panel':
+			'./src/saai/admin/product-video-panel/index.js',
 	},
 	plugins: [
 		...defaultConfig.plugins.filter(

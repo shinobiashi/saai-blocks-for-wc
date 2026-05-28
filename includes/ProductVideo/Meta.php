@@ -95,7 +95,7 @@ class Meta {
 						),
 					),
 				),
-				'sanitize_callback' => array( $this, 'sanitize_videos' ),
+				'sanitize_callback' => array( __CLASS__, 'sanitize_videos' ),
 				'auth_callback'     => array( $this, 'auth_callback' ),
 			)
 		);
@@ -108,7 +108,7 @@ class Meta {
 				'single'            => true,
 				'default'           => '',
 				'show_in_rest'      => true,
-				'sanitize_callback' => array( $this, 'sanitize_display_style' ),
+				'sanitize_callback' => array( __CLASS__, 'sanitize_display_style' ),
 				'auth_callback'     => array( $this, 'auth_callback' ),
 			)
 		);
@@ -123,7 +123,7 @@ class Meta {
 	 * @param mixed $videos Raw input value.
 	 * @return array Sanitized array of video objects.
 	 */
-	public function sanitize_videos( $videos ) {
+	public static function sanitize_videos( $videos ) {
 		if ( ! is_array( $videos ) ) {
 			return array();
 		}
@@ -166,7 +166,7 @@ class Meta {
 	 * @param mixed $value Raw input value.
 	 * @return string One of '', 'inline', 'lightbox', 'standalone'.
 	 */
-	public function sanitize_display_style( $value ) {
+	public static function sanitize_display_style( $value ) {
 		$value = sanitize_key( (string) $value );
 		return in_array( $value, self::$allowed_styles, true ) ? $value : '';
 	}

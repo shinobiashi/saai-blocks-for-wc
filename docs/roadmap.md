@@ -10,6 +10,18 @@
 
 **目的**: WooCommerce 商品ページに動画を表示する機能。商品メタとして動画情報を管理し、ギャラリーへの組み込みと表示順の制御を提供する。
 
+### 進捗サマリー
+
+| フェーズ | 状態 | 備考 |
+| --- | --- | --- |
+| 1.1 メタデータ基盤 | ✅ 完了 | |
+| 1.2 商品編集画面パネル | 🔶 一部完了 | クラシックエディタのみ。ブロックエディタは未対応 |
+| 1.3 グローバル設定ページ | 🔲 未着手 | プレースホルダーのみ実装済み |
+| 1.4 クラシックテーマ フロント統合 | 🔲 未着手 | |
+| 1.5 ブロックテーマ（FSE）統合 | 🔲 未着手 | |
+| 1.6 テスト・品質保証 | 🔲 未着手 | |
+| 1.7 i18n | 🔲 未着手 | |
+
 ### 仕様サマリー
 
 | 項目 | 内容 |
@@ -52,42 +64,44 @@
 
 ---
 
-### Phase 1.1: メタデータ基盤
+### Phase 1.1: メタデータ基盤 ✅
 
 **ファイル**: `includes/ProductVideo/Meta.php`
 
 **内容**:
 
-- [ ] `register_post_meta` で `_saai_product_videos` を登録（REST API 公開）
-- [ ] `register_post_meta` で `_saai_product_video_display_style` を登録
-- [ ] メタ値のサニタイズ・バリデーション実装
-- [ ] `includes/Blocks/Register.php` からの初期化
+- [x] `register_post_meta` で `_saai_product_videos` を登録（REST API 公開）
+- [x] `register_post_meta` で `_saai_product_video_display_style` を登録
+- [x] メタ値のサニタイズ・バリデーション実装（`sanitize_videos` / `sanitize_display_style` — static）
+- [x] メインプラグインクラスから `new Meta()` で初期化
+- [x] `get_videos()` / `get_display_style()` ヘルパー追加（後フェーズ向け）
 
 ---
 
-### Phase 1.2: 商品編集画面パネル
+### Phase 1.2: 商品編集画面パネル 🔶
 
 **ファイル**:
 
 - `includes/ProductVideo/AdminPanel.php`
-- `src/saai/admin/product-video-panel/` (React コンポーネント)
+- `src/saai/admin/product-video-panel/index.js`
+- `src/saai/admin/product-video-panel/index.scss`
 
 **内容**:
 
-- [ ] 商品編集画面（クラシック）の「商品データ」タブに動画パネルを追加
-- [ ] ブロックエディタ（商品ブロックエディタ）への対応
-- [ ] React UI:
-  - 動画タイプ選択（YouTube / Vimeo / WordPress メディア）
-  - URL 入力またはメディアライブラリ選択
-  - サムネイルプレビュー
-  - 最大3本まで追加・削除
-  - ドラッグ＆ドロップで表示順変更
-  - 商品ごとの表示スタイル選択（空 = グローバル設定を使用）
-- [ ] データを `_saai_product_videos` メタとして保存
+- [x] 商品編集画面（クラシック）の「商品データ」タブに "Videos" パネルを追加
+- [ ] ブロックエディタ（商品ブロックエディタ）への対応 — WC 9.x block template API は複雑なため別フェーズに分離予定
+- [x] React UI:
+  - [x] 動画タイプ選択（YouTube / Vimeo / WordPress メディア）
+  - [x] URL 入力（YouTube/Vimeo）または `wp.media` によるメディアライブラリ選択
+  - [x] YouTube サムネイル自動取得・プレビュー表示
+  - [x] 最大3本まで追加・削除
+  - [x] HTML5 ドラッグ＆ドロップで表示順変更（`gallery_order` 自動更新）
+  - [x] 商品ごとの表示スタイル選択（空 = グローバル設定を使用）
+- [x] hidden input 経由で `woocommerce_process_product_meta` フックでメタ保存（nonce 検証付き）
 
 ---
 
-### Phase 1.3: グローバル設定ページ
+### Phase 1.3: グローバル設定ページ 🔲
 
 **ファイル**:
 
@@ -112,7 +126,7 @@
 
 ---
 
-### Phase 1.4: クラシックテーマ フロント統合
+### Phase 1.4: クラシックテーマ フロント統合 🔲
 
 **ファイル**:
 
@@ -133,7 +147,7 @@
 
 ---
 
-### Phase 1.5: ブロックテーマ（FSE）統合
+### Phase 1.5: ブロックテーマ（FSE）統合 🔲
 
 **ファイル**: `src/blocks/product-video/` (Gutenberg ブロック)
 
@@ -146,10 +160,11 @@
   - 表示スタイルに応じたレンダリング切り替え
 - [ ] エディタプレビュー（商品 ID から動画メタを取得して表示）
 - [ ] ブロック属性: `displayStyle` (`"inline"` | `"lightbox"` | `"standalone"` | `"global"`)
+- [ ] WC block product editor（新エディタ）対応 — Phase 1.2 未対応分の継続
 
 ---
 
-### Phase 1.6: テスト・品質保証
+### Phase 1.6: テスト・品質保証 🔲
 
 **内容**:
 
@@ -161,12 +176,12 @@
 
 ---
 
-### Phase 1.7: i18n
+### Phase 1.7: i18n 🔲
 
 **内容**:
 
 - [ ] すべての文字列を `__()` / `_e()` でラップ
-- [ ] JS 文字列を `@wordpress/i18n` でラップ
+- [ ] JS 文字列を `@wordpress/i18n` でラップ（Phase 1.1〜1.2 は実装済み）
 - [ ] POT ファイル生成 (`npm run makepot`)
 - [ ] `wp_set_script_translations` の設定
 

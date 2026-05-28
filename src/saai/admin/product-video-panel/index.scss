@@ -1,0 +1,68 @@
+.saai-video-panel {
+	padding: 16px;
+
+	.saai-video-list {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		margin-bottom: 16px;
+	}
+
+	.saai-video-panel__add-btn {
+		margin-bottom: 24px;
+	}
+
+	.saai-video-panel__style-selector {
+		border-top: 1px solid #e0e0e0;
+		padding-top: 16px;
+		max-width: 320px;
+	}
+}
+
+.saai-video-item {
+	cursor: grab;
+	transition: box-shadow 0.15s ease, opacity 0.15s ease;
+
+	&:active {
+		cursor: grabbing;
+	}
+
+	&.is-drag-target {
+		box-shadow: 0 0 0 2px #007cba;
+		opacity: 0.8;
+	}
+
+	.saai-video-item__handle {
+		display: inline-block;
+		font-size: 18px;
+		color: #757575;
+		margin-right: 8px;
+		cursor: grab;
+		line-height: 1;
+
+		&:active {
+			cursor: grabbing;
+		}
+	}
+
+	.saai-video-item__media-row {
+		margin-bottom: 8px;
+	}
+
+	.saai-video-item__media-url {
+		word-break: break-all;
+		margin-bottom: 8px;
+	}
+
+	.saai-video-item__thumbnail-wrap {
+		margin-top: 8px;
+	}
+
+	.saai-video-item__thumbnail {
+		display: block;
+		max-width: 160px;
+		height: auto;
+		border-radius: 4px;
+		border: 1px solid #e0e0e0;
+	}
+}
