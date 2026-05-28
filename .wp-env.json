@@ -1,6 +1,6 @@
 {
 	"phpVersion": "8.2",
-	"core": "WordPress/WordPress#6.8",
+	"core": "WordPress/WordPress#6.9",
 	"plugins": [
 		"https://downloads.wordpress.org/plugin/woocommerce.zip",
 		"https://downloads.wordpress.org/plugin/plugin-check.zip",
@@ -15,9 +15,6 @@
 		"SCRIPT_DEBUG": true,
 		"WP_DEBUG_LOG": true
 	},
-	"env": {
-		"development": {
-			"phpmyadminPort": 9001
-		}
-	}
+	"phpmyadminPort": 9001,
+	"testsEnvironment": false
 }
