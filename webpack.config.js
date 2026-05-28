@@ -12,6 +12,8 @@ module.exports = {
 			'./src/saai/admin/video-settings/index.js',
 		'saai/admin/product-video-panel':
 			'./src/saai/admin/product-video-panel/index.js',
+		'frontend/product-video':
+			'./src/frontend/product-video/index.js',
 	},
 	plugins: [
 		...defaultConfig.plugins.filter(
