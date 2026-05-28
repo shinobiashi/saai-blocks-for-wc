@@ -1,141 +1,142 @@
 # Saai Blocks for WooCommerce — Claude Code Instructions
 
-## プロジェクト概要
+## Project Overview
 
-WooCommerce に特化した Gutenberg ブロックプラグイン。フロントエンド・管理画面の両対応。
-WordPress.org への公開を予定。
+A WooCommerce-focused Gutenberg block plugin supporting both frontend and admin screens.
+Intended for release on WordPress.org.
 
 - **Plugin slug**: `saai-blocks-for-wc`
 - **Text domain**: `saai-blocks-for-wc`
 - **PHP namespace**: `SaaiBlocksForWc`
 - **Requires**: WordPress 6.6+, WooCommerce 9.0+, PHP 7.4+
 
-## 技術スタック
+## Tech Stack
 
-| レイヤー | 技術 |
+| Layer | Technology |
 | --- | --- |
 | PHP | WordPress Coding Standards, PHPStan lv8 |
 | JS/CSS | `@wordpress/scripts` (webpack), React |
-| ブロック | `block.json` + `register_block_type` |
-| 管理画面 | WooCommerce Admin (`wc_admin_register_page`) + `@woocommerce/components` |
-| テスト | PHPUnit (WP_UnitTestCase / WC_Unit_Test_Case) |
+| Blocks | `block.json` + `register_block_type` |
+| Admin UI | Shared SAAI menu + `@woocommerce/components` |
+| Tests | PHPUnit (WP_UnitTestCase / WC_Unit_Test_Case) |
 | CI | GitHub Actions (PHPCS, PHPStan, PHPUnit, JS lint) |
 
-## ディレクトリ構造
+## Directory Structure
 
-```
+```text
 saai-blocks-for-wc/
-├── saai-blocks-for-wc.php   # プラグインエントリーポイント
-├── includes/                # PHP クラス (PSR-4 オートロード)
-│   ├── Admin/               # 管理画面 (WC Admin ページ等)
-│   ├── Blocks/              # ブロック登録
-│   └── ProductVideo/        # 商品動画機能 (Feature 1)
-│       ├── Meta.php         # メタデータ登録・操作
-│       ├── AdminPanel.php   # 商品編集画面パネル
-│       ├── ClassicTheme.php # クラシックテーマ フロント統合
-│       └── REST.php         # REST API エンドポイント
-├── src/                     # JS/CSS ソース
-│   ├── saai/admin/          # WC Admin ページ (React SPA, saai-blocks と同構成)
-│   │   ├── overview/        # 概要ページ
-│   │   └── video-settings/  # 動画グローバル設定ページ
-│   └── blocks/              # ブロックソース
-│       └── product-video/   # 商品動画ブロック
-├── build/                   # ビルド成果物 (コミット対象)
-│   ├── admin.js / admin.css
-│   └── blocks/
-│       └── product-video/
-├── docs/                    # 設計・ロードマップドキュメント
-└── tests/                   # PHPUnit テスト
+├── saai-blocks-for-wc.php        # Plugin entry point
+├── includes/                     # PHP classes (PSR-4 autoload)
+│   ├── Admin/                    # Admin pages and menu registration
+│   ├── Blocks/                   # Block registration
+│   └── ProductVideo/             # Product video feature (Feature 1)
+│       ├── Meta.php              # Post meta registration and helpers
+│       ├── AdminPanel.php        # Product edit screen panel
+│       ├── ClassicTheme.php      # Classic theme front-end integration
+│       └── REST.php              # REST API endpoints
+├── src/                          # JS/CSS source (edit here)
+│   ├── saai/admin/               # Admin React pages (same layout as saai-blocks)
+│   │   ├── overview/             # Shared SAAI overview page
+│   │   └── video-settings/       # WC video global settings page
+│   └── blocks/                   # Block source files
+│       └── product-video/        # Product video block
+├── assets/
+│   └── images/                   # Plugin images (saai_icon.svg, etc.)
+├── build/                        # Webpack output (committed)
+│   └── saai/admin/
+│       ├── overview.js / overview.css
+│       └── video-settings.js / video-settings.css
+├── docs/                         # Design docs and roadmap
+└── tests/                        # PHPUnit tests
 ```
 
-## 開発コマンド
+## Development Commands
 
 ```bash
-# JS ビルド (watch)
+# JS build (watch)
 npm start
 
-# JS ビルド (本番)
+# JS build (production)
 npm run build
 
-# PHP コードスニファー
+# PHP code sniffer
 vendor/bin/phpcs
 
-# PHP 自動修正
+# PHP auto-fixer
 vendor/bin/phpcbf
 
-# PHPStan 静的解析
+# PHPStan static analysis
 vendor/bin/phpstan analyse --memory-limit=512M
 
-# テスト
+# Tests
 vendor/bin/phpunit
 
-# wp-env 起動 / 停止
+# wp-env start / stop
 npx wp-env start
 npx wp-env stop
 ```
 
-## アーキテクチャ方針
+## Architecture
 
-### 管理画面
+### Admin Menu
 
-- JS ソースは `src/saai/admin/` 以下に配置（`saai-blocks` プラグインと同構成）
-- React + `@woocommerce/components` を使用し、既存の WC Admin UI と統一
-- 商品個別設定は商品編集画面のカスタムパネルとして実装
+JS source lives under `src/saai/admin/` — the same layout as the `saai-blocks` plugin.
 
-**メニュー構成** (saai-blocks と共有):
+**Menu structure** (shared with saai-blocks):
 
-| スラッグ | 種別 | 説明 |
+| Slug | Type | Notes |
 | --- | --- | --- |
-| `saai-overview` | トップメニュー | saai-blocks 未導入時のみ本プラグインが登録 |
-| `saai-blocks-for-wc-settings` | サブメニュー | 本プラグインが常に登録 |
+| `saai-overview` | Top-level menu | Registered by this plugin only when saai-blocks is not active |
+| `saai-blocks-for-wc-settings` | Submenu | Always registered by this plugin |
 
-**saai-blocks 共存時の競合回避**:
-- `register_pages()` 内で `global $admin_page_hooks` を参照し、`saai-overview` が未登録の場合のみ `add_menu_page()` を呼ぶ
-- overview スクリプトは `class_exists('SAAI_Blocks')` が false の場合のみエンキュー
-- `saai_framework/` クラスは使用しない（`Setup.php` で完結）
+**Conflict avoidance when both plugins are active**:
 
-### データ設計
+- `register_pages()` checks `global $admin_page_hooks` before calling `add_menu_page()` — skips if `saai-overview` is already registered.
+- Overview scripts are enqueued only when `class_exists('SAAI_Blocks')` is `false`.
+- No `saai_framework` class is used; all logic is self-contained in `includes/Admin/Setup.php`.
 
-- 商品メタは `register_post_meta` で登録し REST API 経由でも操作可能
-- ポスト固有メタは `_saai_` プレフィックス（アンダースコアで非表示）
-- プラグイン設定は `saai_blocks_for_wc_` プレフィックスで `update_option`
+### Data Layer
 
-### ブロック
+- Product meta is registered via `register_post_meta` and exposed through the REST API.
+- Private meta keys use the `_saai_` prefix (hidden from custom fields UI).
+- Plugin-wide options use the `saai_blocks_for_wc_` prefix with `update_option`.
 
-- `build/blocks/` 以下の全サブディレクトリを `register_block_type` で自動登録
-- ブロックは `block.json` + PHP render callback (dynamic blocks) を基本とする
-- WooCommerce ブロックとの統合は Slot/Fill または `woocommerce/product-details` ブロックへの拡張で対応
+### Blocks
 
-### フロント統合
+- All subdirectories under `build/blocks/` are auto-registered via `register_block_type`.
+- Blocks use `block.json` + a PHP render callback (dynamic blocks by default).
+- WooCommerce block integration uses Slot/Fill or `woocommerce/product-details` block extensions.
 
-- **クラシックテーマ**: `woocommerce_product_thumbnails` フックで動画を注入
-- **ブロックテーマ**: `woocommerce/product-image-gallery` ブロックへの Inner Blocks 拡張 or フィルター
+### Front-End Integration
 
-## コーディング規約
+- **Classic themes**: inject videos via the `woocommerce_product_thumbnails` hook.
+- **Block themes**: extend `woocommerce/product-image-gallery` with Inner Blocks or filters.
 
-- WordPress Coding Standards 準拠（PHPCS で自動チェック）
-- セキュリティ: input は `sanitize_*`、output は `esc_*`、nonce 必須
-- コメントは理由が自明でない場合のみ（WHY を書く、WHAT は書かない）
-- 新規 PHP クラスは `includes/` 以下に配置し `SaaiBlocksForWc\` 名前空間を使用
+## Coding Standards
 
-## 使用スキル一覧
+- Follow WordPress Coding Standards (enforced by PHPCS).
+- Security: sanitize on input (`sanitize_*`), escape on output (`esc_*`), always verify nonces.
+- Add comments only when the WHY is non-obvious — never describe what the code does.
+- New PHP classes go under `includes/` and must use the `SaaiBlocksForWc\` namespace.
 
-| タスク | スキル |
+## Available Skills
+
+| Task | Skill |
 | --- | --- |
-| ブロック開発 | `wp-block-development`, `wc-block-development` |
-| WooCommerce ブロック | `wc-block-development` |
-| PHPUnit テスト | `wp-phpunit` |
-| PHPCS 設定・修正 | `wp-phpcs` |
-| PHPStan 設定 | `wp-phpstan` |
+| Block development | `wp-block-development`, `wc-block-development` |
+| WooCommerce blocks | `wc-block-development` |
+| PHPUnit tests | `wp-phpunit` |
+| PHPCS setup / fixes | `wp-phpcs` |
+| PHPStan setup | `wp-phpstan` |
 | GitHub Actions CI | `wp-github-actions` |
-| WordPress.org リリース | `wp-org-release` |
-| WP-CLI 操作 | `wp-wpcli-and-ops` |
-| REST API 拡張 | `wp-rest-api` |
-| i18n | `wp-i18n` |
-| E2E テスト | `wp-e2e-playwright` |
-| セキュリティ監査 | `wp-security-check` |
+| WordPress.org release | `wp-org-release` |
+| WP-CLI operations | `wp-wpcli-and-ops` |
+| REST API extensions | `wp-rest-api` |
+| Internationalization | `wp-i18n` |
+| E2E tests | `wp-e2e-playwright` |
+| Security audit | `wp-security-check` |
 
-## 参考リンク
+## References
 
 - [WooCommerce Blocks Handbook](https://developer.woocommerce.com/docs/category/woocommerce-blocks/)
 - [Block Editor Handbook](https://developer.wordpress.org/block-editor/)
