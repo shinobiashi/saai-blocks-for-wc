@@ -2,6 +2,9 @@
 .saai-video-thumb {
 	position: relative;
 	cursor: pointer;
+	// overflow:hidden prevents the injected player from extending outside the slide.
+	// Do NOT add display:flex — it breaks flexslider's slide-height measurement.
+	overflow: hidden;
 
 	.saai-video-thumb__link {
 		display: block;
@@ -54,11 +57,14 @@
 	}
 }
 
+// Default (standalone / lightbox): fill available width.
 .saai-player--wp-media {
 	display: block;
 	width: 100%;
 	max-width: 100%;
+	height: auto;
 }
+
 
 // Lightbox
 .saai-lightbox {

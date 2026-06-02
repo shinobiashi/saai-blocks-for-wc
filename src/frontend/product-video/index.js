@@ -70,8 +70,17 @@ import './index.scss';
 	function initInline( $gallery ) {
 		const flexslider = $gallery.data( 'flexslider' );
 		if ( ! flexslider ) {
+			// Block themes don't load wc-flexslider; fall back to lightbox behavior.
+			initLightbox( $gallery );
 			return;
 		}
+
+		// Measure the first non-video slide's height at init time, before any
+		// viewport resizing occurs. flexslider updates the viewport height before
+		// firing the `before` callback (line 547 < 645 in flexslider source), so
+		// querying it inside `before` gives the already-updated (wrong) value.
+		const $firstImageSlide = flexslider.slides.filter( ':not(.saai-video-thumb)' ).first();
+		let imageSlideH = $firstImageSlide.outerHeight() || 0;
 
 		const originalBefore = flexslider.vars.before;
 
@@ -83,15 +92,52 @@ import './index.scss';
 			const $current = slider.slides.eq( slider.currentSlide );
 			const $next    = slider.slides.eq( slider.animatingTo );
 
-			// Remove player from the slide we're leaving.
-			if ( $current.hasClass( 'saai-video-thumb' ) ) {
-				$current.find( '.saai-player-wrap, .saai-player' ).remove();
+			// Keep imageSlideH up to date when leaving a non-video slide.
+			if ( ! $current.hasClass( 'saai-video-thumb' ) ) {
+				imageSlideH = $current.outerHeight() || imageSlideH;
 			}
 
-			// Inject player in the slide we're entering.
+			// Remove player from the slide we're leaving and restore the thumbnail.
+			if ( $current.hasClass( 'saai-video-thumb' ) ) {
+				$current.find( '.saai-player-wrap, .saai-player' ).remove();
+				$current.find( '.saai-video-thumb__link' ).show();
+			}
+
+			// Inject player in the slide we're entering, hiding the thumbnail.
 			if ( $next.hasClass( 'saai-video-thumb' ) ) {
+				$next.find( '.saai-video-thumb__link' ).hide();
 				const $player = createPlayer( $next );
 				if ( $player ) {
+					const nw      = parseInt( $next.data( 'video-natural-width' ), 10 ) || 0;
+					const nh      = parseInt( $next.data( 'video-natural-height' ), 10 ) || 0;
+					const slideW  = $next.width() || $gallery.width() || 0;
+					const maxH    = imageSlideH || slideW;
+
+					if ( nw && nh && ( slideW || maxH ) ) {
+						// Scale the video to fit within slideW × maxH while preserving
+						// aspect ratio. Setting explicit px dimensions immediately
+						// prevents the browser's 300×150 default size from being used
+						// by flexslider's smoothHeight before metadata loads.
+						const scale = Math.min( slideW / nw, maxH / nh );
+						const w     = Math.round( nw * scale );
+						const h     = Math.round( nh * scale );
+						$player.css( {
+							display: 'block',
+							width:   w + 'px',
+							height:  h + 'px',
+							margin:  '0 auto',
+						} );
+					} else if ( maxH ) {
+						// Fallback when natural dimensions are unavailable.
+						$player.css( {
+							display:      'block',
+							width:        'auto',
+							height:       'auto',
+							'max-width':  '100%',
+							'max-height': maxH + 'px',
+							margin:       '0 auto',
+						} );
+					}
 					$next.append( $player );
 				}
 			}
@@ -187,15 +233,15 @@ import './index.scss';
 
 	$( function () {
 		// Handle galleries already initialized before this script ran.
+		// Works with and without flexslider (block themes don't use flexslider).
 		$( '.woocommerce-product-gallery' ).each( function () {
-			if ( $( this ).data( 'flexslider' ) ) {
-				initGallery( $( this ) );
-			}
+			initGallery( $( this ) );
 		} );
 	} );
 
 	// Handle galleries initialized after this script ran (standard path).
-	$( document ).on( 'wc-product-gallery-after-init', function ( e, $gallery ) {
-		initGallery( $gallery );
+	// WooCommerce passes the raw DOM element as the first extra argument, not a jQuery object.
+	$( document ).on( 'wc-product-gallery-after-init', function ( e, gallery ) {
+		initGallery( $( gallery ) );
 	} );
 } )( jQuery );

@@ -118,13 +118,36 @@ class ClassicTheme {
 		if ( ! $thumb_url && 'youtube' === $type && $video_id ) {
 			$thumb_url = esc_url( 'https://img.youtube.com/vi/' . rawurlencode( $video_id ) . '/mqdefault.jpg' );
 		}
+
+		// For wp_media without a custom thumbnail, use the attachment's poster frame if available.
+		if ( ! $thumb_url && $attach_id ) {
+			$poster = get_post_meta( $attach_id, '_thumbnail_id', true );
+			if ( $poster ) {
+				$thumb_url = esc_url( (string) wp_get_attachment_image_url( (int) $poster, 'thumbnail' ) );
+			}
+		}
+
+		// Embed the video's natural dimensions so JS can size the player immediately,
+		// before the <video> element's metadata loads (avoids flexslider smoothHeight
+		// measuring the 300×150 browser default and locking the viewport at 150px).
+		$natural_w = 0;
+		$natural_h = 0;
+		if ( $attach_id && 'wp_media' === $type ) {
+			$meta      = wp_get_attachment_metadata( $attach_id );
+			$natural_w = absint( $meta['width'] ?? 0 );
+			$natural_h = absint( $meta['height'] ?? 0 );
+		}
 		?>
 		<div class="woocommerce-product-gallery__image saai-video-thumb"
+			data-thumb="<?php echo esc_url( $thumb_url ); ?>"
+			data-thumb-alt="<?php echo $title; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- already esc_attr() above ?>"
 			data-video-type="<?php echo esc_attr( $type ); ?>"
 			data-video-id="<?php echo esc_attr( $video_id ); ?>"
 			data-video-url="<?php echo esc_url( $url ); ?>"
 			data-video-style="<?php echo esc_attr( $style ); ?>"
-			data-attachment-id="<?php echo absint( $attach_id ); ?>">
+			data-attachment-id="<?php echo absint( $attach_id ); ?>"
+			data-video-natural-width="<?php echo absint( $natural_w ); ?>"
+			data-video-natural-height="<?php echo absint( $natural_h ); ?>">
 			<a href="<?php echo $thumb_url ? esc_url( $thumb_url ) : '#'; ?>"
 				class="saai-video-thumb__link"
 				aria-label="<?php echo $title; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- already esc_attr() above ?>">
