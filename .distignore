@@ -10,6 +10,13 @@ package-lock.json
 composer.json
 composer.lock
 
+# JS/CSS tooling config
+eslint.config.js
+.eslintrc
+.eslintrc.js
+.eslintrc.json
+.prettierrc.json
+
 # PHP quality tools config
 phpstan.neon
 phpstan-bootstrap.php
