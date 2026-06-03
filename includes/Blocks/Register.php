@@ -1,5 +1,4 @@
 <?php
-// phpcs:disable WordPress.Files.FileName
 /**
  * Block registration handler.
  *

@@ -1,5 +1,4 @@
 <?php
-// phpcs:disable WordPress.Files.FileName
 /**
  * Product video admin panel for the classic product editor.
  *

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<ruleset name="Saai Blocks for WooCommerce">
+    <description>WordPress Coding Standards for saai-blocks-for-wc.</description>
+
+    <file>saai-blocks-for-wc.php</file>
+    <file>includes/</file>
+
+    <arg name="extensions" value="php"/>
+    <arg name="warning-severity" value="0"/>
+    <arg name="colors"/>
+
+    <rule ref="WordPress"/>
+
+    <!--
+        PSR-4 autoloading uses PascalCase filenames (e.g. AdminPanel.php).
+        WordPress CS expects class-admin-panel.php, which conflicts with PSR-4.
+        Exclude the filename sniff for the entire includes/ directory.
+    -->
+    <rule ref="WordPress.Files.FileName">
+        <exclude-pattern>includes/</exclude-pattern>
+    </rule>
+</ruleset>
