@@ -1,0 +1,135 @@
+name: CI
+
+on:
+    push:
+        branches: ['main']
+    pull_request:
+        branches: ['main']
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+# ================================================================
+# Job 1: JavaScript lint & build
+# ================================================================
+jobs:
+    js:
+        name: JS (Node ${{ matrix.node-version }})
+        runs-on: ubuntu-latest
+
+        strategy:
+            fail-fast: false
+            matrix:
+                node-version: ['20.x', '22.x']
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: 'npm'
+
+            - name: Install JS dependencies
+              run: npm ci --ignore-scripts
+
+            - name: Lint JS
+              run: npm run lint:js
+
+            - name: Lint CSS
+              run: npm run lint:css
+
+            - name: Build
+              run: npm run build
+
+            - name: Security audit (production deps, high+)
+              run: npm audit --omit=dev --audit-level=high
+
+    # ================================================================
+    # Job 2: PHP syntax check
+    # ================================================================
+    php-syntax:
+        name: PHP syntax (PHP ${{ matrix.php-version }})
+        runs-on: ubuntu-latest
+
+        strategy:
+            fail-fast: false
+            matrix:
+                php-version: ['8.2', '8.3']
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php-version }}
+                  tools: none
+                  coverage: none
+
+            - name: Check PHP syntax
+              run: |
+                  find . \
+                    -name "*.php" \
+                    -not -path "*/vendor/*" \
+                    -not -path "*/node_modules/*" \
+                    -print0 \
+                  | xargs -0 -n1 php -l
+
+    # ================================================================
+    # Job 3: PHP CodeSniffer — WordPress Coding Standards
+    # ================================================================
+    phpcs:
+        name: PHPCS (WordPress CS)
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '8.2'
+                  tools: composer
+                  coverage: none
+
+            - name: Cache Composer packages
+              uses: actions/cache@v4
+              with:
+                  path: ~/.cache/composer
+                  key: composer-${{ hashFiles('composer.lock') }}
+                  restore-keys: composer-
+
+            - name: Install Composer dependencies
+              run: composer install --prefer-dist --no-progress --no-interaction
+
+            - name: Run PHPCS
+              run: composer run phpcs
+
+    # ================================================================
+    # Job 4: PHPStan static analysis
+    # ================================================================
+    phpstan:
+        name: PHPStan
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '8.2'
+                  tools: composer
+                  coverage: none
+
+            - name: Cache Composer packages
+              uses: actions/cache@v4
+              with:
+                  path: ~/.cache/composer
+                  key: composer-${{ hashFiles('composer.lock') }}
+                  restore-keys: composer-
+
+            - name: Install Composer dependencies
+              run: composer install --prefer-dist --no-progress --no-interaction
+
+            - name: Run PHPStan
+              run: composer run phpstan

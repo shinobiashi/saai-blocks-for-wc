@@ -12,14 +12,18 @@
 		"automattic/jetpack-autoloader": "^2",
 		"phpstan/phpstan": "^2.0",
 		"szepeviktor/phpstan-wordpress": "^2.0",
-		"php-stubs/woocommerce-stubs": "^9.0"
+		"php-stubs/woocommerce-stubs": "^9.0",
+		"wp-coding-standards/wpcs": "^3.3",
+		"dealerdirect/phpcodesniffer-composer-installer": "^1.0"
 	},
 	"config": {
 		"allow-plugins": {
-			"automattic/jetpack-autoloader": true
+			"automattic/jetpack-autoloader": true,
+			"dealerdirect/phpcodesniffer-composer-installer": true
 		}
 	},
 	"scripts": {
-		"phpstan": "php -d memory_limit=512M vendor/bin/phpstan analyse"
+		"phpstan": "php -d memory_limit=512M vendor/bin/phpstan analyse",
+		"phpcs": "vendor/bin/phpcs --standard=WordPress --extensions=php --ignore=vendor,node_modules --warning-severity=0 saai-blocks-for-wc.php includes/"
 	}
 }

@@ -1,0 +1,69 @@
+# Development source files
+src/
+node_modules/
+vendor/bin/
+
+# Build config
+webpack.config.js
+package.json
+package-lock.json
+composer.json
+composer.lock
+
+# PHP quality tools config
+phpstan.neon
+phpstan-bootstrap.php
+phpunit.xml.dist
+.phpcs.xml
+.phpcs.xml.dist
+phpcs.xml
+phpcs.xml.dist
+
+# CI/CD
+.github/
+
+# E2E / Playwright
+playwright.config.ts
+playwright-report/
+test-results/
+
+# Tests
+tests/
+
+# Local / dev config
+.wp-env.json
+.wp-env.override.json
+.editorconfig
+.eslintrc
+.eslintrc.json
+.stylelintrc
+.stylelintrc.json
+
+# VCS
+.git/
+.gitignore
+.gitattributes
+
+# Docs / meta (keep readme.txt for wp.org, exclude others)
+CLAUDE.md
+README.md
+docs/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Secrets / local config
+.claude/
+.npmrc
+
+# WordPress.org plugin page assets (deployed separately to SVN assets/)
+.wordpress-org/
+
+# This file itself
+.distignore
+
+# Generated zip
+*.zip

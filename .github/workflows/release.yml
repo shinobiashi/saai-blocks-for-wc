@@ -1,0 +1,84 @@
+name: Release
+
+on:
+    push:
+        tags:
+            - 'v*.*.*'
+
+permissions:
+    contents: write
+
+jobs:
+    release:
+        name: Build & Release
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '22.x'
+                  cache: 'npm'
+
+            - name: Install JS dependencies & build
+              run: |
+                  npm ci --ignore-scripts
+                  npm run build
+
+            - name: Set up PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '8.2'
+                  tools: composer
+                  coverage: none
+
+            - name: Install Composer dependencies (no dev)
+              run: composer install --no-progress --prefer-dist --no-dev --no-interaction
+
+            - name: Get version from tag
+              id: version
+              run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+            - name: Create plugin zip
+              run: |
+                  PLUGIN_SLUG="saai-blocks-for-wc"
+                  VERSION="${{ steps.version.outputs.VERSION }}"
+
+                  mkdir -p "/tmp/${PLUGIN_SLUG}-${VERSION}/${PLUGIN_SLUG}"
+                  rsync -a \
+                    --exclude-from='.distignore' \
+                    . "/tmp/${PLUGIN_SLUG}-${VERSION}/${PLUGIN_SLUG}/"
+
+                  cd "/tmp/${PLUGIN_SLUG}-${VERSION}"
+                  zip -r "${PLUGIN_SLUG}-${VERSION}.zip" "${PLUGIN_SLUG}/"
+                  mv "${PLUGIN_SLUG}-${VERSION}.zip" "$GITHUB_WORKSPACE/"
+
+            - name: Create GitHub Release
+              uses: softprops/action-gh-release@v2
+              with:
+                  name: ${{ github.ref_name }}
+                  tag_name: ${{ github.ref_name }}
+                  generate_release_notes: true
+                  prerelease: ${{ contains(github.ref, '-') }}
+                  files: saai-blocks-for-wc-${{ steps.version.outputs.VERSION }}.zip
+
+            # ================================================================
+            # TODO: WordPress.org 申請承認後にコメントを外す
+            #
+            # Deploy to WordPress.org SVN
+            # Required secrets (repo Settings → Secrets → Actions):
+            #   SVN_USERNAME — WordPress.org account username
+            #   SVN_PASSWORD — WordPress.org application password
+            #     (generate at: https://profiles.wordpress.org/me/profile/applications/)
+            # ================================================================
+            # - name: Deploy to WordPress.org
+            #   if: ${{ !contains(github.ref, '-') }}
+            #   uses: 10up/action-wordpress-plugin-deploy@stable
+            #   env:
+            #       SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+            #       SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+            #       SLUG: saai-blocks-for-wc
+            #       ASSETS_DIR: .wordpress-org
