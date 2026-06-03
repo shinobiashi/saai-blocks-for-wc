@@ -27,7 +27,19 @@ define( 'SAAI_BLOCKS_FOR_WC_MAIN_PLUGIN_FILE', __FILE__ );
 define( 'SAAI_BLOCKS_FOR_WC_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SAAI_BLOCKS_FOR_WC_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
-require_once SAAI_BLOCKS_FOR_WC_PLUGIN_DIR . 'vendor/autoload_packages.php';
+spl_autoload_register(
+	function ( $class_name ) {
+		$prefix = 'SaaiBlocksForWc\\';
+		if ( strncmp( $prefix, $class_name, strlen( $prefix ) ) !== 0 ) {
+			return;
+		}
+		$relative = substr( $class_name, strlen( $prefix ) );
+		$file     = SAAI_BLOCKS_FOR_WC_PLUGIN_DIR . 'includes/' . str_replace( '\\', '/', $relative ) . '.php';
+		if ( file_exists( $file ) ) {
+			require $file;
+		}
+	}
+);
 
 use SaaiBlocksForWc\Admin\Setup;
 use SaaiBlocksForWc\Blocks\Register;
