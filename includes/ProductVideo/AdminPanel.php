@@ -157,6 +157,8 @@ class AdminPanel {
 				'videos'       => Meta::get_videos( $post->ID ),
 				'displayStyle' => (string) get_post_meta( $post->ID, Meta::META_DISPLAY_STYLE, true ),
 				'maxVideos'    => Meta::MAX_VIDEOS,
+				'restUrl'      => esc_url_raw( rest_url( 'wp/v2/media' ) ),
+				'restNonce'    => wp_create_nonce( 'wp_rest' ),
 			)
 		);
 

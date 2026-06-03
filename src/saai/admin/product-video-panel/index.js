@@ -5,6 +5,7 @@ import {
 	Button,
 	SelectControl,
 	TextControl,
+	Spinner,
 	Card,
 	CardBody,
 	CardHeader,
@@ -17,6 +18,8 @@ const {
 	videos: initialVideos = [],
 	displayStyle: initialDisplayStyle = '',
 	maxVideos = 3,
+	restUrl = '',
+	restNonce = '',
 } = window.saaiProductVideoData || {};
 
 // ---- Helpers ----------------------------------------------------------------
@@ -52,6 +55,11 @@ function getYoutubeThumbnail( videoId ) {
 		: '';
 }
 
+/** Return just the filename part of a URL. */
+function basename( url ) {
+	return url ? decodeURIComponent( url.split( '/' ).pop() || url ) : '';
+}
+
 function emptyVideo( order ) {
 	return {
 		id: generateId(),
@@ -63,6 +71,94 @@ function emptyVideo( order ) {
 		title: '',
 		gallery_order: order,
 	};
+}
+
+/**
+ * Approach 3: Capture the first frame of a same-origin video using Canvas API,
+ * upload it to the WP media library, and return the image URL.
+ *
+ * Resolves null on any error (CORS, canvas taint, upload failure, etc.).
+ *
+ * @param {string} videoUrl  - URL of the video to capture.
+ * @param {string} fileName  - Base name for the generated image file.
+ * @return {Promise<string|null>}
+ */
+async function captureFirstFrame( videoUrl, fileName ) {
+	if ( ! restUrl || ! restNonce ) return null;
+
+	return new Promise( ( resolve ) => {
+		const video = document.createElement( 'video' );
+		video.crossOrigin = 'anonymous';
+		video.muted = true;
+		video.preload = 'metadata';
+		video.src = videoUrl;
+
+		const done = ( result ) => {
+			video.src = '';
+			resolve( result );
+		};
+
+		video.addEventListener(
+			'loadeddata',
+			() => {
+				video.currentTime = 0.1;
+			},
+			{ once: true }
+		);
+
+		video.addEventListener(
+			'seeked',
+			async () => {
+				try {
+					const canvas = document.createElement( 'canvas' );
+					canvas.width = video.videoWidth || 1280;
+					canvas.height = video.videoHeight || 720;
+					canvas.getContext( '2d' ).drawImage( video, 0, 0 );
+
+					canvas.toBlob(
+						async ( blob ) => {
+							if ( ! blob ) {
+								done( null );
+								return;
+							}
+							const baseName = (
+								fileName || 'video'
+							).replace( /[^a-zA-Z0-9_-]/g, '-' );
+							const form = new FormData();
+							form.append(
+								'file',
+								blob,
+								`${ baseName }-thumbnail.jpg`
+							);
+
+							try {
+								const res = await fetch( restUrl, {
+									method: 'POST',
+									headers: { 'X-WP-Nonce': restNonce },
+									body: form,
+								} );
+								if ( ! res.ok ) {
+									done( null );
+									return;
+								}
+								const data = await res.json();
+								done( data.source_url || null );
+							} catch {
+								done( null );
+							}
+						},
+						'image/jpeg',
+						0.85
+					);
+				} catch {
+					done( null );
+				}
+			},
+			{ once: true }
+		);
+
+		video.addEventListener( 'error', () => done( null ) );
+	} );
 }
 
 // ---- VideoItem --------------------------------------------------------------
@@ -78,6 +174,8 @@ function VideoItem( {
 	onDragEnd,
 	isDragTarget,
 } ) {
+	const [ isCapturing, setIsCapturing ] = useState( false );
+
 	const handleTypeChange = ( type ) => {
 		onUpdate( index, {
 			type,
@@ -106,15 +204,57 @@ function VideoItem( {
 			library: { type: 'video' },
 			multiple: false,
 		} );
+
+		frame.on( 'select', async () => {
+			const att = frame.state().get( 'selection' ).first().toJSON();
+
+			onUpdate( index, {
+				url:           att.url,
+				attachment_id: att.id,
+				thumbnail_url: '',
+				title:         att.title || '',
+				video_id:      '',
+			} );
+
+			// Approach 1: WordPress-generated thumbnail (FFmpeg / poster frame).
+			const wpThumbnail =
+				att.image?.src && ! att.image.src.includes( '/wp-includes/' )
+					? att.image.src
+					: '';
+
+			if ( wpThumbnail ) {
+				onUpdate( index, { thumbnail_url: wpThumbnail } );
+				return;
+			}
+
+			// Approach 3: Client-side first-frame capture.
+			setIsCapturing( true );
+			const captured = await captureFirstFrame(
+				att.url,
+				att.title || att.filename || 'video'
+			);
+			setIsCapturing( false );
+
+			if ( captured ) {
+				onUpdate( index, { thumbnail_url: captured } );
+			}
+		} );
+
+		frame.open();
+	};
+
+	// Approach 2: Manually select a thumbnail image from the media library.
+	const openThumbnailLibrary = () => {
+		if ( ! window.wp?.media ) return;
+		const frame = window.wp.media( {
+			title: __( 'Select Thumbnail Image', 'saai-blocks-for-wc' ),
+			button: { text: __( 'Use this image', 'saai-blocks-for-wc' ) },
+			library: { type: 'image' },
+			multiple: false,
+		} );
 		frame.on( 'select', () => {
 			const att = frame.state().get( 'selection' ).first().toJSON();
-			onUpdate( index, {
-				url: att.url,
-				attachment_id: att.id,
-				thumbnail_url: att.image?.src || '',
-				title: att.title || '',
-				video_id: '',
-			} );
+			onUpdate( index, { thumbnail_url: att.url } );
 		} );
 		frame.open();
 	};
@@ -137,94 +277,154 @@ function VideoItem( {
 			} }
 			onDragEnd={ onDragEnd }
 		>
-			<CardHeader>
-				<Flex align="center">
-					<FlexItem>
-						<span
-							className="saai-video-item__handle"
-							aria-hidden="true"
-						>
-							⠿
-						</span>
-					</FlexItem>
-					<FlexBlock>
-						<strong>
-							{ __( 'Video', 'saai-blocks-for-wc' ) }{ ' ' }
-							{ video.gallery_order }
-						</strong>
-					</FlexBlock>
-					<FlexItem>
-						<Button
-							variant="tertiary"
-							isDestructive
-							onClick={ () => onRemove( index ) }
-						>
-							{ __( 'Remove', 'saai-blocks-for-wc' ) }
-						</Button>
-					</FlexItem>
-				</Flex>
+			{ /* ---- Header: drag handle + label + remove ---- */ }
+			<CardHeader className="saai-video-item__header">
+				<span
+					className="saai-video-item__handle"
+					aria-label={ __( 'Drag to reorder', 'saai-blocks-for-wc' ) }
+				>
+					⠿
+				</span>
+				<span className="saai-video-item__title">
+					{ __( 'Video', 'saai-blocks-for-wc' ) }{ ' ' }
+					{ video.gallery_order }
+				</span>
+				<Button
+					className="saai-video-item__remove"
+					variant="tertiary"
+					isDestructive
+					isSmall
+					onClick={ () => onRemove( index ) }
+					aria-label={ __( 'Remove video', 'saai-blocks-for-wc' ) }
+				>
+					{ __( 'Remove', 'saai-blocks-for-wc' ) }
+				</Button>
 			</CardHeader>
 
 			<CardBody>
-				<SelectControl
-					label={ __( 'Video source', 'saai-blocks-for-wc' ) }
-					value={ video.type }
-					options={ [
-						{ value: 'youtube', label: 'YouTube' },
-						{ value: 'vimeo', label: 'Vimeo' },
-						{
-							value: 'wp_media',
-							label: __( 'WordPress Media', 'saai-blocks-for-wc' ),
-						},
-					] }
-					onChange={ handleTypeChange }
-				/>
-
-				{ video.type !== 'wp_media' ? (
-					<TextControl
-						label={ __( 'Video URL', 'saai-blocks-for-wc' ) }
-						value={ video.url }
-						placeholder={
-							video.type === 'youtube'
-								? 'https://www.youtube.com/watch?v=...'
-								: 'https://vimeo.com/...'
-						}
-						onChange={ handleUrlChange }
+			<div className="saai-video-item__body">
+				{ /* ---- Source type + file/URL row ---- */ }
+				<div className="saai-video-item__source-row">
+					<SelectControl
+						label={ __( 'Source', 'saai-blocks-for-wc' ) }
+						value={ video.type }
+						options={ [
+							{ value: 'youtube', label: 'YouTube' },
+							{ value: 'vimeo', label: 'Vimeo' },
+							{
+								value: 'wp_media',
+								label: __( 'WordPress Media', 'saai-blocks-for-wc' ),
+							},
+						] }
+						onChange={ handleTypeChange }
+						className="saai-video-item__source-select"
 					/>
-				) : (
-					<div className="saai-video-item__media-row">
-						{ video.url && (
-							<p className="saai-video-item__media-url description">
-								{ video.url }
-							</p>
-						) }
-						<Button variant="secondary" onClick={ openMediaLibrary }>
-							{ video.url
-								? __( 'Change Video', 'saai-blocks-for-wc' )
-								: __( 'Select Video', 'saai-blocks-for-wc' ) }
-						</Button>
-					</div>
-				) }
 
+					{ video.type !== 'wp_media' ? (
+						<TextControl
+							label={ __( 'URL', 'saai-blocks-for-wc' ) }
+							value={ video.url }
+							placeholder={
+								video.type === 'youtube'
+									? 'https://www.youtube.com/watch?v=...'
+									: 'https://vimeo.com/...'
+							}
+							onChange={ handleUrlChange }
+							className="saai-video-item__url-input"
+						/>
+					) : (
+						<div className="saai-video-item__file-field">
+							<span className="saai-video-item__field-label">
+								{ __( 'File', 'saai-blocks-for-wc' ) }
+							</span>
+							<Flex align="center" gap={ 2 }>
+								{ video.url && (
+									<FlexBlock>
+										<span
+											className="saai-video-item__filename"
+											title={ video.url }
+										>
+											{ basename( video.url ) }
+										</span>
+									</FlexBlock>
+								) }
+								<FlexItem>
+									<Button
+										variant="secondary"
+										isSmall
+										onClick={ openMediaLibrary }
+									>
+										{ video.url
+											? __( 'Change', 'saai-blocks-for-wc' )
+											: __( 'Select file', 'saai-blocks-for-wc' ) }
+									</Button>
+								</FlexItem>
+							</Flex>
+						</div>
+					) }
+				</div>
+
+				{ /* ---- Title ---- */ }
 				<TextControl
 					label={ __( 'Title (optional)', 'saai-blocks-for-wc' ) }
 					value={ video.title }
 					onChange={ ( title ) => onUpdate( index, { title } ) }
 				/>
 
-				{ video.thumbnail_url && (
-					<div className="saai-video-item__thumbnail-wrap">
-						<img
-							src={ video.thumbnail_url }
-							alt={
-								video.title ||
-								__( 'Video thumbnail', 'saai-blocks-for-wc' )
-							}
-							className="saai-video-item__thumbnail"
-							width="160"
-						/>
-					</div>
-				) }
+				{ /* ---- Thumbnail section ---- */ }
+				<div className="saai-video-item__thumb-section">
+					<span className="saai-video-item__field-label">
+						{ __( 'Gallery thumbnail', 'saai-blocks-for-wc' ) }
+					</span>
+
+					{ isCapturing ? (
+						<div className="saai-video-item__thumb-capturing">
+							<Spinner />
+							<span>
+								{ __(
+									'Capturing first frame…',
+									'saai-blocks-for-wc'
+								) }
+							</span>
+						</div>
+					) : video.thumbnail_url ? (
+						<div className="saai-video-item__thumb-preview">
+							<img
+								src={ video.thumbnail_url }
+								alt=""
+								className="saai-video-item__thumb-img"
+							/>
+							<div className="saai-video-item__thumb-actions">
+								<Button
+									variant="secondary"
+									isSmall
+									onClick={ openThumbnailLibrary }
+								>
+									{ __( 'Change', 'saai-blocks-for-wc' ) }
+								</Button>
+								<Button
+									variant="link"
+									isSmall
+									isDestructive
+									onClick={ () =>
+										onUpdate( index, { thumbnail_url: '' } )
+									}
+								>
+									{ __( 'Remove', 'saai-blocks-for-wc' ) }
+								</Button>
+							</div>
+						</div>
+					) : (
+						<Button
+							variant="secondary"
+							isSmall
+							onClick={ openThumbnailLibrary }
+						>
+							{ __( 'Set thumbnail', 'saai-blocks-for-wc' ) }
+						</Button>
+					) }
+				</div>
+			</div>{ /* .saai-video-item__body */ }
 			</CardBody>
 		</Card>
 	);
@@ -238,7 +438,6 @@ function VideoPanel() {
 	const [ dragTarget, setDragTarget ] = useState( null );
 	const dragFrom = useRef( null );
 
-	// Keep hidden inputs in sync so PHP can read them on form submit.
 	useEffect( () => {
 		const vi = document.getElementById( 'saai-videos-data' );
 		const si = document.getElementById( 'saai-display-style-data' );
@@ -265,31 +464,19 @@ function VideoPanel() {
 		);
 	};
 
-	const handleDragStart = ( index ) => {
-		dragFrom.current = index;
-	};
-
-	const handleDragOver = ( index ) => {
-		setDragTarget( index );
-	};
+	const handleDragStart = ( index ) => { dragFrom.current = index; };
+	const handleDragOver  = ( index ) => { setDragTarget( index ); };
+	const handleDragEnd   = ()        => { dragFrom.current = null; setDragTarget( null ); };
 
 	const handleDrop = ( targetIndex ) => {
 		const from = dragFrom.current;
-		if ( from === null || from === targetIndex ) {
-			setDragTarget( null );
-			return;
-		}
+		if ( from === null || from === targetIndex ) { setDragTarget( null ); return; }
 		setVideos( ( prev ) => {
 			const next = [ ...prev ];
 			const [ item ] = next.splice( from, 1 );
 			next.splice( targetIndex, 0, item );
 			return next.map( ( v, i ) => ( { ...v, gallery_order: i + 1 } ) );
 		} );
-		dragFrom.current = null;
-		setDragTarget( null );
-	};
-
-	const handleDragEnd = () => {
 		dragFrom.current = null;
 		setDragTarget( null );
 	};
@@ -332,22 +519,10 @@ function VideoPanel() {
 					) }
 					value={ displayStyle }
 					options={ [
-						{
-							value: '',
-							label: __( '— Use global setting —', 'saai-blocks-for-wc' ),
-						},
-						{
-							value: 'inline',
-							label: __( 'Inline (in gallery)', 'saai-blocks-for-wc' ),
-						},
-						{
-							value: 'lightbox',
-							label: __( 'Lightbox', 'saai-blocks-for-wc' ),
-						},
-						{
-							value: 'standalone',
-							label: __( 'Standalone section', 'saai-blocks-for-wc' ),
-						},
+						{ value: '',          label: __( '— Use global setting —', 'saai-blocks-for-wc' ) },
+						{ value: 'inline',    label: __( 'Inline (in gallery)',     'saai-blocks-for-wc' ) },
+						{ value: 'lightbox',  label: __( 'Lightbox',               'saai-blocks-for-wc' ) },
+						{ value: 'standalone',label: __( 'Standalone section',      'saai-blocks-for-wc' ) },
 					] }
 					onChange={ setDisplayStyle }
 				/>

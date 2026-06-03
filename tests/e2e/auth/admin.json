@@ -2,7 +2,7 @@
   "cookies": [
     {
       "name": "wordpress_cd9b744c619529c4988e0e94344eaf12",
-      "value": "admin%7C1780573008%7Czu2kKaKRiIVVIenXunJAJ0Up1TmxXx6MZ3nlvsqsWWa%7C2068e318b7323a7df1a81f3d5ebe9a2b11a35d1d25d7e53ce772f189f2843955",
+      "value": "admin%7C1780607327%7CdB1bGOkB1503ukwZFEBeTR6Fh025wWgKCISRZwm7NKW%7Cd6ed52c6082cb2c89892e554a8b3b0b0d84f316be78e5f935412cec58980af6a",
       "domain": "localhost",
       "path": "/wp-content/plugins",
       "expires": -1,
@@ -12,7 +12,7 @@
     },
     {
       "name": "wordpress_cd9b744c619529c4988e0e94344eaf12",
-      "value": "admin%7C1780573008%7Czu2kKaKRiIVVIenXunJAJ0Up1TmxXx6MZ3nlvsqsWWa%7C2068e318b7323a7df1a81f3d5ebe9a2b11a35d1d25d7e53ce772f189f2843955",
+      "value": "admin%7C1780607327%7CdB1bGOkB1503ukwZFEBeTR6Fh025wWgKCISRZwm7NKW%7Cd6ed52c6082cb2c89892e554a8b3b0b0d84f316be78e5f935412cec58980af6a",
       "domain": "localhost",
       "path": "/wp-admin",
       "expires": -1,
@@ -32,7 +32,7 @@
     },
     {
       "name": "wordpress_logged_in_cd9b744c619529c4988e0e94344eaf12",
-      "value": "admin%7C1780573008%7Czu2kKaKRiIVVIenXunJAJ0Up1TmxXx6MZ3nlvsqsWWa%7C41f9241235f8e3fe4ad7be5fdd1ee9dcb388b21add59479b60a188c9c59e121c",
+      "value": "admin%7C1780607327%7CdB1bGOkB1503ukwZFEBeTR6Fh025wWgKCISRZwm7NKW%7C3e34cc693e77efcbc4c3116d64c9e5e0ddec094f71885f805214ed23f0292ac1",
       "domain": "localhost",
       "path": "/",
       "expires": -1,
@@ -45,17 +45,17 @@
       "value": "deleted%3Dundefined%26libraryContent%3Dbrowse%26plugin_check_category_preferences%3Dgeneral__plugin_repo__security__performance__accessibility",
       "domain": "localhost",
       "path": "/",
-      "expires": 1811936208.488711,
+      "expires": 1811970527.330968,
       "httpOnly": false,
       "secure": false,
       "sameSite": "Lax"
     },
     {
       "name": "wp-settings-time-1",
-      "value": "1780400208",
+      "value": "1780434527",
       "domain": "localhost",
       "path": "/",
-      "expires": 1811936208.488761,
+      "expires": 1811970527.331013,
       "httpOnly": false,
       "secure": false,
       "sameSite": "Lax"

@@ -1,3 +1,5 @@
+// ---- Panel wrapper ----------------------------------------------------------
+
 .saai-video-panel {
 	padding: 16px;
 
@@ -19,50 +21,163 @@
 	}
 }
 
-.saai-video-item {
-	cursor: grab;
-	transition: box-shadow 0.15s ease, opacity 0.15s ease;
+// ---- Video item card --------------------------------------------------------
 
-	&:active {
-		cursor: grabbing;
-	}
+.saai-video-item {
+	transition: box-shadow 0.15s ease, opacity 0.15s ease;
+	cursor: default !important; // Card resets grab; handle applies it
 
 	&.is-drag-target {
 		box-shadow: 0 0 0 2px #007cba;
-		opacity: 0.8;
+		opacity: 0.75;
+	}
+}
+
+// Header: drag handle | "Video N" | Remove button
+
+.saai-video-item__header {
+	display: flex !important;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 16px !important;
+	background: #f6f7f7;
+	border-bottom: 1px solid #e0e0e0;
+}
+
+.saai-video-item__handle {
+	font-size: 18px;
+	color: #aaa;
+	cursor: grab;
+	line-height: 1;
+	padding: 0 2px;
+	flex-shrink: 0;
+
+	&:active { cursor: grabbing; }
+}
+
+.saai-video-item__title {
+	flex: 1;
+	font-weight: 600;
+	font-size: 13px;
+}
+
+.saai-video-item__remove {
+	flex-shrink: 0;
+	font-size: 12px !important;
+}
+
+// ---- Card body layout -------------------------------------------------------
+
+// Force all direct children to stack vertically regardless of the parent
+// CardBody's flex context (WP admin sometimes uses flex on panel wrappers).
+.saai-video-item__body {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+	width: 100%;
+
+	// Give each field-level block breathing room
+	> * + * {
+		margin-top: 12px;
 	}
 
-	.saai-video-item__handle {
-		display: inline-block;
-		font-size: 18px;
-		color: #757575;
-		margin-right: 8px;
-		cursor: grab;
-		line-height: 1;
+	// Components that already supply bottom margin — reset to avoid double gap
+	.components-base-control {
+		margin-bottom: 0 !important;
+	}
+}
 
-		&:active {
-			cursor: grabbing;
-		}
+// ---- Card body: shared label style ------------------------------------------
+
+.saai-video-item__field-label {
+	display: block;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: #757575;
+	margin-bottom: 6px;
+}
+
+// ---- Source row (type selector + URL/file) ----------------------------------
+
+.saai-video-item__source-row {
+	display: grid;
+	grid-template-columns: 160px 1fr;
+	gap: 12px;
+	align-items: end; // align bottom of each column (label heights may differ)
+	margin-bottom: 12px;
+
+	// On narrow panels, stack vertically
+	@media (max-width: 680px) {
+		grid-template-columns: 1fr;
 	}
 
-	.saai-video-item__media-row {
-		margin-bottom: 8px;
+	// Remove bottom margin from SelectControl inside the row
+	.components-base-control {
+		margin-bottom: 0 !important;
 	}
+}
 
-	.saai-video-item__media-url {
-		word-break: break-all;
-		margin-bottom: 8px;
-	}
+// File field (wp_media)
 
-	.saai-video-item__thumbnail-wrap {
-		margin-top: 8px;
-	}
-
-	.saai-video-item__thumbnail {
+.saai-video-item__file-field {
+	.saai-video-item__filename {
 		display: block;
-		max-width: 160px;
-		height: auto;
-		border-radius: 4px;
-		border: 1px solid #e0e0e0;
+		font-size: 12px;
+		color: #3c434a;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		max-width: 260px;
 	}
+}
+
+// URL input (YouTube / Vimeo) – remove bottom margin inside the grid
+
+.saai-video-item__url-input {
+	.components-base-control {
+		margin-bottom: 0 !important;
+	}
+}
+
+// ---- Thumbnail section ------------------------------------------------------
+
+.saai-video-item__thumb-section {
+	margin-top: 16px;
+	padding-top: 14px;
+	border-top: 1px solid #e0e0e0;
+}
+
+.saai-video-item__thumb-capturing {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: #757575;
+	font-size: 13px;
+	min-height: 36px;
+}
+
+.saai-video-item__thumb-preview {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+}
+
+.saai-video-item__thumb-img {
+	display: block;
+	width: 120px;
+	height: 80px;
+	object-fit: cover;
+	border-radius: 4px;
+	border: 1px solid #ddd;
+	background: #f0f0f0;
+	flex-shrink: 0;
+}
+
+.saai-video-item__thumb-actions {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	flex-shrink: 0;
 }
