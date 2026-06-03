@@ -14,20 +14,18 @@
 		"start": "wp-scripts start --blocks-manifest",
 		"postinstall": "composer install"
 	},
-	"dependencies": {
+	"devDependencies": {
+		"@playwright/test": "^1.60.0",
 		"@woocommerce/components": "*",
+		"@woocommerce/dependency-extraction-webpack-plugin": "latest",
+		"@woocommerce/eslint-plugin": "latest",
 		"@wordpress/block-editor": "*",
 		"@wordpress/blocks": "*",
 		"@wordpress/components": "*",
+		"@wordpress/e2e-test-utils-playwright": "^1.47.0",
 		"@wordpress/element": "*",
 		"@wordpress/hooks": "*",
-		"@wordpress/i18n": "*"
-	},
-	"devDependencies": {
-		"@playwright/test": "^1.60.0",
-		"@woocommerce/dependency-extraction-webpack-plugin": "latest",
-		"@woocommerce/eslint-plugin": "latest",
-		"@wordpress/e2e-test-utils-playwright": "^1.47.0",
+		"@wordpress/i18n": "*",
 		"@wordpress/prettier-config": "latest",
 		"@wordpress/scripts": "^32.2.0"
 	},
