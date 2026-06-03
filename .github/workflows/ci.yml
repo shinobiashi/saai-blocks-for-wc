@@ -31,7 +31,7 @@ jobs:
                   node-version: ${{ matrix.node-version }}
 
             - name: Install JS dependencies
-              run: npm install --ignore-scripts --legacy-peer-deps
+              run: npm install --ignore-scripts
 
             - name: Lint JS
               run: npm run lint:js
