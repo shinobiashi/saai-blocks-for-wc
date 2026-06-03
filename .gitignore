@@ -57,6 +57,11 @@ package-lock.json
 # Unit tests
 tmp/
 
+# Playwright
+test-results/
+playwright-report/
+tests/e2e/auth/*.json
+
 # Composer
 vendor/
 bin/composer/**/vendor/

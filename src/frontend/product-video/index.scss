@@ -2,7 +2,8 @@
 .saai-video-thumb {
 	position: relative;
 	cursor: pointer;
-	// overflow:hidden prevents the injected player from extending outside the slide.
+	// overflow:hidden prevents the injected player from extending outside
+	// the slide.
 	// Do NOT add display:flex — it breaks flexslider's slide-height measurement.
 	overflow: hidden;
 

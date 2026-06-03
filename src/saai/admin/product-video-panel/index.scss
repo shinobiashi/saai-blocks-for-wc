@@ -52,7 +52,9 @@
 	padding: 0 2px;
 	flex-shrink: 0;
 
-	&:active { cursor: grabbing; }
+	&:active {
+		cursor: grabbing;
+	}
 }
 
 .saai-video-item__title {
@@ -122,6 +124,7 @@
 // File field (wp_media)
 
 .saai-video-item__file-field {
+
 	.saai-video-item__filename {
 		display: block;
 		font-size: 12px;
@@ -136,6 +139,7 @@
 // URL input (YouTube / Vimeo) – remove bottom margin inside the grid
 
 .saai-video-item__url-input {
+
 	.components-base-control {
 		margin-bottom: 0 !important;
 	}

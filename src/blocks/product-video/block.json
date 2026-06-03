@@ -13,7 +13,7 @@
 			"default": "global"
 		}
 	},
-	"usesContext": [ "postId", "postType" ],
+	"usesContext": ["postId", "postType"],
 	"supports": {
 		"html": false,
 		"reusable": false,
