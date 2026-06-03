@@ -91,37 +91,50 @@ if ( ! class_exists( 'SaaiBlocksForWc' ) ) :
 
 			return self::$instance;
 		}
+
+		/**
+		 * Entry point called on the plugins_loaded hook.
+		 *
+		 * Loads translations, checks for WooCommerce, and boots the plugin.
+		 *
+		 * @since 0.1.0
+		 */
+		public static function init() {
+			load_plugin_textdomain(
+				'saai-blocks-for-wc',
+				false,
+				plugin_basename( dirname( SAAI_BLOCKS_FOR_WC_MAIN_PLUGIN_FILE ) ) . '/languages'
+			);
+
+			if ( ! class_exists( 'WooCommerce' ) ) {
+				add_action( 'admin_notices', array( __CLASS__, 'woocommerce_missing_notice' ) );
+				return;
+			}
+
+			self::instance();
+		}
+
+		/**
+		 * Admin notice shown when WooCommerce is not active.
+		 */
+		public static function woocommerce_missing_notice() {
+			echo '<div class="error"><p><strong>' .
+				wp_kses(
+					sprintf(
+						/* translators: %s: WooCommerce download URL. */
+						__( 'Saai Blocks for WooCommerce requires WooCommerce to be installed and active. You can download %s here.', 'saai-blocks-for-wc' ),
+						'<a href="https://woocommerce.com/" target="_blank">WooCommerce</a>'
+					),
+					array(
+						'a' => array(
+							'href'   => array(),
+							'target' => array(),
+						),
+					)
+				) .
+				'</strong></p></div>';
+		}
 	}
 endif;
 
-add_action( 'plugins_loaded', 'saai_blocks_for_wc_init', 10 );
-
-/**
- * Initialize the plugin.
- *
- * @since 0.1.0
- */
-function saai_blocks_for_wc_init() {
-	load_plugin_textdomain( 'saai-blocks-for-wc', false, plugin_basename( __DIR__ ) . '/languages' );
-
-	if ( ! class_exists( 'WooCommerce' ) ) {
-		add_action(
-			'admin_notices',
-			static function () {
-				echo '<div class="error"><p><strong>' .
-					wp_kses(
-						sprintf(
-							/* translators: %s: WooCommerce download URL. */
-							__( 'Saai Blocks for WooCommerce requires WooCommerce to be installed and active. You can download %s here.', 'saai-blocks-for-wc' ),
-							'<a href="https://woocommerce.com/" target="_blank">WooCommerce</a>'
-						),
-						array( 'a' => array( 'href' => array(), 'target' => array() ) )
-					) .
-					'</strong></p></div>';
-			}
-		);
-		return;
-	}
-
-	SaaiBlocksForWc::instance();
-}
+add_action( 'plugins_loaded', array( 'SaaiBlocksForWc', 'init' ), 10 );
