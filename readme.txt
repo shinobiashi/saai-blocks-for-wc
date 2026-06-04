@@ -4,7 +4,7 @@ Tags: woocommerce, blocks, gutenberg, ecommerce
 Requires at least: 6.6
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 0.1.1
+Stable tag: 0.1.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -34,6 +34,9 @@ Yes. WooCommerce must be installed and activated.
 
 == Changelog ==
 
+= 0.1.2 =
+* Fix duplicate inline video in product gallery caused by double initialization.
+
 = 0.1.1 =
 * Fix fatal error on activation caused by missing vendor/autoload_packages.php.
 
@@ -41,6 +44,9 @@ Yes. WooCommerce must be installed and activated.
 * Initial release.
 
 == Upgrade Notice ==
+
+= 0.1.2 =
+Fixes duplicate inline video display in the product gallery.
 
 = 0.1.1 =
 Fixes a fatal error on activation. Update immediately.

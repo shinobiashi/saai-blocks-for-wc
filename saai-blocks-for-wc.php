@@ -3,7 +3,7 @@
  * Plugin Name: Saai Blocks for WooCommerce
  * Plugin URI: https://wordpress.org/plugins/saai-blocks-for-wc/
  * Description: WooCommerce-focused Gutenberg blocks for the frontend and admin.
- * Version: 0.1.1
+ * Version: 0.1.2
  * Author: Shohei Tanaka
  * Author URI: https://artws.info/
  * Text Domain: saai-blocks-for-wc
@@ -22,7 +22,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'SAAI_BLOCKS_FOR_WC_VERSION', '0.1.1' );
+define( 'SAAI_BLOCKS_FOR_WC_VERSION', '0.1.2' );
 define( 'SAAI_BLOCKS_FOR_WC_MAIN_PLUGIN_FILE', __FILE__ );
 define( 'SAAI_BLOCKS_FOR_WC_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SAAI_BLOCKS_FOR_WC_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
