@@ -227,6 +227,11 @@ import './index.scss';
 	// --- Gallery init ---
 
 	function initGallery($gallery) {
+		if ($gallery.data('saai-video-init')) {
+			return;
+		}
+		$gallery.data('saai-video-init', true);
+
 		const $thumbs = $gallery.find('.saai-video-thumb');
 		if (!$thumbs.length) {
 			return;
